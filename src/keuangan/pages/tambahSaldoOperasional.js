@@ -100,7 +100,7 @@ export default function TambahSaldoOperasional() {
 
                 </div> 
                 <div className="md:grid md:grid-cols-2 gap-4 w-full h-auto flex flex-col">
-                    <div className="flex justify-center w-full h-64 md:h-full p-4 rounded">
+                    <div className="w-full h-64 md:h-full p-4 rounded">
                         <FullCalendar
                             plugins={[ dayGridPlugin ]}
                             initialView="dayGridMonth"

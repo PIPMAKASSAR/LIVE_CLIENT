@@ -92,7 +92,7 @@ export default function SaldoDanaKelolaan() {
 
                 <div className="flex flex-col h-auto  p-9 mb-4 rounded bg-gray-50 dark:bg-gray-800">
                     <div className="mb-5">
-                        <Button handleFunction={tambahSaldoDanaKelolaan} title={"Tambah Saldo Operasional"} />
+                        <Button handleFunction={tambahSaldoDanaKelolaan} title={"Tambah Saldo Dana Kelolaan"} />
                     </div>
                     {/* Search */}
                     <div className="flex flex-row w-full justify-between items-center mb-4">
