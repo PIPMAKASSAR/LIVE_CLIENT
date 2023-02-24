@@ -120,10 +120,6 @@ export default function TambahPenerimaan() {
                             plugins={[ dayGridPlugin ]}
                             initialView="dayGridMonth"
                             height={"100%"}
-                            events={[
-                                { title: 'Posting', date: '2023-02-01' },
-                                { title: 'Pending', date: '2023-02-02' }
-                            ]}
                         />
                     </div>
 
