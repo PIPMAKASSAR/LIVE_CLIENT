@@ -19,6 +19,7 @@ import normalizeBayar from "../../helpers/normalizeBayar";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import routeName from "../../helpers/routeName";
+import handleKeyPress from "../../helpers/handleKeyPress";
 
 
 export default function TambahPenerimaan() {
@@ -74,15 +75,6 @@ export default function TambahPenerimaan() {
     useEffect(() => {
         handleChangeRupiah(bayar)
     },[bayar])
-
-    function handleKeyPress(event) {
-        const keyCode = event.which || event.keyCode;
-        const keyValue = String.fromCharCode(keyCode);
-
-        if (/[^0-9\b]/.test(keyValue)) {
-            event.preventDefault();
-        }
-    }
 
   
     return(
