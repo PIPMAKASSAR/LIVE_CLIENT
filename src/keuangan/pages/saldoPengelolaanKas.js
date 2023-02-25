@@ -19,11 +19,6 @@ export default function SaldoPengelolaanKas() {
     const [cari, setCari] = useState("")
     const [reload, setReload] = useState(false)
 
-
-    const titles = [
-        "No", "Tanggal Transaksi", "Kode Bank", "No Billyet", "Deposito", "Bunga","Update"
-    ]
-
     const jumlahRow = [
         "10", "25", "50", "100"
     ]
@@ -151,8 +146,7 @@ export default function SaldoPengelolaanKas() {
                         </form>
                     </div>
                     {/* Table Penerimaan */}
-                    <TableWithPagination
-                        tittles={titles} 
+                    <TableWithPagination 
                         data={dataSaldoPengelolaanKas} 
                         category={"saldoPengelolaanKas"} 
                         isLoading={isLoading}  

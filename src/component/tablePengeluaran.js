@@ -6,9 +6,11 @@ import { setItemEdit } from "../redux/feature/pengeluaranSlice"
 import pengeluaranApi from "../api/pengeluaranApi"
 import ButtonEdit from "./buttonEdit"
 import ButtonDelete from "./buttonDelete"
+import ButtonDetail from "./buttonDetail"
 import ModalDelete from "./modalDelete"
 import ModalEdit from "./modalEdit"
 import ModalDeletePengluaran from "./modalDeletePengeluaaran"
+import ModalDetail from "./modalDetail"
 import rupiah from "../helpers/rupiah"
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -18,10 +20,16 @@ export default function TablePengeluaran ({data,  isLoading , category, tittles,
     const dispatch = useDispatch()
     const [showModalEdit, setShowModalEdit] = useState(false)
     const [showModalDel, setShowModalDel] = useState(false)
+    const [showModalDetail, setShowModalDetail] = useState(false)
     const [uuId, setUuid] = useState("")
+    const [detailData, setDetailData] = useState({})
 
     const titleDefault = [
         "No", "Tanggal Transaksi", "Jenis Transaksi", "Kode Akun", "Nilai", "Update"
+    ]
+
+    const title = [
+        "tgl_transaksi", "jns_transaksi","kode_akun", "bayar", "status_update"
     ]
     
     const handleModalEdit = (payload) => {
@@ -38,6 +46,11 @@ export default function TablePengeluaran ({data,  isLoading , category, tittles,
     const handleShowModalEdit = () => {
         setShowModalEdit(!showModalEdit)
         setReload(!reload)
+    }
+
+    const handleShowModalDetail = (value) => {
+        setShowModalDetail(true)
+        setDetailData({...value})
     }
 
     const handleDeletePengeluaran = () => {
@@ -63,7 +76,7 @@ export default function TablePengeluaran ({data,  isLoading , category, tittles,
    
     return(
         <div className={`relative overflow-x-auto shadow-md sm:rounded-lg ${isLoading ? "h-96" : "h-auto"} overflow-y-auto mb-4`}>
-            
+            <ModalDetail data={detailData}  showModal={showModalDetail} setShowModal={setShowModalDetail} title={title} />
             {   isLoading && 
                 <div className="w-full h-full">
                     <LoadingSpinner />
@@ -171,7 +184,7 @@ export default function TablePengeluaran ({data,  isLoading , category, tittles,
                                         <td className="px-3 py-2">
                                             {
                                                 item["status_update"] === 'Posting' ?
-                                                <Button title="Lihat" />
+                                                <ButtonDetail key={index} handleFunction={() => handleShowModalDetail(item)} />
                                                 :
                                                 <div>
                                                     <ButtonEdit handleFunction={handleModalEdit} title="Edit" color="yellow" data={item} />

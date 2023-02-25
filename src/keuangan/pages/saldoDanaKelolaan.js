@@ -19,10 +19,6 @@ export default function SaldoDanaKelolaan() {
     const [cari, setCari] = useState("")
     const [reload, setReload] = useState(false)
 
-    const titles = [
-        "No", "Tanggal Transaksi", "Kode Bank", "No Rekening","Saldo Akhir", "Update"
-    ]
-
     const jumlahRow = [
         "10", "25", "50", "100"
     ]
@@ -152,7 +148,6 @@ export default function SaldoDanaKelolaan() {
                     </div>
                     {/* Table Penerimaan */}
                     <TableWithPagination
-                        tittles={titles} 
                         data={dataSaldoDanaKelolaan} 
                         category={"saldoDanaKelolaan"} 
                         isLoading={isLoading}  

@@ -1,7 +1,6 @@
 import rupiah from "../helpers/rupiah"
 
 export default function ModalDetail( {showModal, setShowModal, data, title} ) {
-    console.log("ini d modal guys", data)
     return (
         <div 
             id="popup-modal" 
@@ -101,8 +100,68 @@ export default function ModalDetail( {showModal, setShowModal, data, title} ) {
                                             return(
                                                 <div className="py-3 sm:py-4">
                                                     <div key={index} className="flex items-center space-x-4">
-                                                        <label htmlFor="small-input" className="text-sm font-medium text-gray-900 truncate dark:text-white">status:</label>            
-                                                        <span className="text-sm font-bold text-green-500 truncate dark:text-gray-400">{data[item]}</span>
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">status:</label>            
+                                                        <span className="text-lg font-bold text-green-500 truncate dark:text-gray-400">{data[item]}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if(item === "tgl_transaksi") {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">tanggal transaksi:</label>            
+                                                        <span className="text-lg text-gray-500 truncate dark:text-gray-400">{data[item]}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if(item === "kdbank") {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">kode bank:</label>            
+                                                        <span className="text-lg text-gray-500 truncate dark:text-gray-400">{data[item]}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if(item === "no_bilyet") {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">nomor billyet:</label>            
+                                                        <span className="text-lg text-gray-500 truncate dark:text-gray-400">{data[item]}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if(item === "no_rekening") {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">nomor rekening:</label>            
+                                                        <span className="text-lg text-gray-500 truncate dark:text-gray-400">{data[item]}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if(item === "jns_transaksi") {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">jenis transaksi:</label>            
+                                                        <span className="text-lg text-gray-500 truncate dark:text-gray-400">{data[item]}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if(item === "kode_akun") {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">kode akun:</label>            
+                                                        <span className="text-lg text-gray-500 truncate dark:text-gray-400">{data[item]}</span>
                                                     </div>
                                                 </div>
                                             )
@@ -111,17 +170,48 @@ export default function ModalDetail( {showModal, setShowModal, data, title} ) {
                                             return(
                                                 <div className="py-3 sm:py-4">
                                                     <div key={index} className="flex items-center space-x-4">
-                                                        <label htmlFor="small-input" className="text-sm font-medium text-gray-900 truncate dark:text-white">Nilai:</label>            
-                                                        <span className="text-sm  text-gray-500 truncate dark:text-gray-400">{rupiah(data[item], "Rp.")}</span>
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">nilai:</label>            
+                                                        <span className="text-lg  text-gray-500 truncate dark:text-gray-400">{rupiah(data[item], "Rp.")}</span>
                                                     </div>
                                                 </div>
                                             )
                                         }
+                                        if(item === "saldo_akhir" ) {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">saldo akhir:</label>            
+                                                        <span className="text-lg  text-gray-500 truncate dark:text-gray-400">{rupiah(data[item], "Rp.")}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if(item === "nilai_deposito") {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">nilai deposito:</label>            
+                                                        <span className="text-lg  text-gray-500 truncate dark:text-gray-400">{rupiah(data[item], "Rp.")}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if(item === "nilai_bunga" ) {
+                                            return(
+                                                <div className="py-3 sm:py-4">
+                                                    <div key={index} className="flex items-center space-x-4">
+                                                        <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">nilai bunga:</label>            
+                                                        <span className="text-lg  text-gray-500 truncate dark:text-gray-400">{rupiah(data[item], "Rp.")}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+
                                         return(
                                             <div className="py-3 sm:py-4">
                                                 <div key={index} className="flex items-center space-x-4">
-                                                    <label htmlFor="small-input" className="text-sm font-medium text-gray-900 truncate dark:text-white">{item}:</label>            
-                                                    <span className="text-sm text-gray-500 truncate dark:text-gray-400">{data[item]}</span>
+                                                    <label htmlFor="small-input" className="text-lg font-medium text-gray-900 truncate dark:text-white">{item}:</label>            
+                                                    <span className="text-lg text-gray-500 truncate dark:text-gray-400">{data[item]}</span>
                                                 </div>
                                             </div>
                                         )

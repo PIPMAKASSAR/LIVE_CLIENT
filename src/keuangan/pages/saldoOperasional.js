@@ -154,7 +154,6 @@ export default function SaldoOperasional() {
                     </div>
                     {/* Table Penerimaan */}
                     <TableWithPagination
-                        tittles={titles} 
                         data={dataListSaldoOperasional} 
                         category={"saldoOperasional"} 
                         isLoading={isLoading}  

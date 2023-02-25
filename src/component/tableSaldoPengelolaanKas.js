@@ -1,12 +1,14 @@
-import Button from "./button"
 import { useState } from "react"
-import saldoPengelolaanKasApi from "../api/saldoPengelolaanKasApi"
-import LoadingSpinner from "./loadingSpinner"
 import { useDispatch } from "react-redux"
 import { setItemEdit } from "../redux/feature/saldoPengelolaanKasSlice"
+import saldoPengelolaanKasApi from "../api/saldoPengelolaanKasApi"
+import LoadingSpinner from "./loadingSpinner"
 
+import Button from "./button"
+import ButtonDetail from "./buttonDetail"
 import ModalEdit from "./modalEdit"
 import ModalDelete from "./modalDelete"
+import ModalDetail from "./modalDetail"
 import ButtonDelete from "./buttonDelete"
 
 import ButtonEdit from "./buttonEdit"
@@ -17,13 +19,23 @@ import withReactContent from "sweetalert2-react-content";
 
 
 
-export default function TableSaldoPengelolaanKas ({data,  isLoading , category, tittles, setReload, reload}) {
+export default function TableSaldoPengelolaanKas ({data,  isLoading , category, setReload, reload}) {
     const MySwal = withReactContent(Swal)
     const dispatch = useDispatch()
     const [showModalEdit, setShowModalEdit] = useState(false)
     const [showModalDel, setShowModalDel] = useState(false)
+    const [showModalDetail, setShowModalDetail] = useState(false)
     const [uuId, setUuid] = useState("")
     const [dataEdit, setDataEdit] = useState({})
+    const [detailData, setDetailData] = useState({})
+
+    const titleDefault = [
+        "No", "Tanggal Transaksi", "Kode Bank", "No Billyet", "Deposito", "Bunga","Update"
+    ]
+
+    const title = [
+        "uuid", "tgl_transaksi","kdbank", "no_bilyet", "nilai_deposito", "nilai_bunga","status_update"
+    ]
 
     const handleModalEdit = (payload) => {
         setShowModalEdit(true)
@@ -34,6 +46,11 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
     const handleShowModalEdit = () => {
         setShowModalEdit(!showModalEdit)
         setReload(!reload)
+    }
+
+    const handleShowModalDetail = (value) => {
+        setShowModalDetail(true)
+        setDetailData({...value})
     }
     
     const handleModalDelete = (payload) => {
@@ -64,21 +81,18 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
    
     return(
         <div className={`relative overflow-x-auto shadow-md sm:rounded-lg ${isLoading ? "h-96" : "h-auto"} overflow-y-auto mb-4`}>
-            
+            <ModalDetail data={detailData}  showModal={showModalDetail} setShowModal={setShowModalDetail} title={title} />
             {   isLoading && 
                 <div className="w-full h-full">
                     <LoadingSpinner />
                 </div>  
             }
-           
-            
-            
             <table className={` ${isLoading ? "hidden" : null} w-full h-auto text-sm text-left text-gray-500 dark:text-gray-400 mb-5`}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         {
-                            tittles &&  
-                            tittles.map((title, index) => {
+                            titleDefault &&  
+                            titleDefault.map((title, index) => {
                                 return(
                                     <th key={index} scope="col" className="px-3 py-3">
                                         {title}
@@ -187,7 +201,7 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
                                         <td className="px-3 py-2">
                                             {
                                                 item["status_update"] === 'Posting' ?
-                                                <Button title="Lihat" />
+                                                <ButtonDetail key={index} handleFunction={() => handleShowModalDetail(item)} />
                                                 :
                                                 <div>
                                                     <ButtonEdit handleFunction={handleModalEdit} title="Edit" color="yellow" data={item} />

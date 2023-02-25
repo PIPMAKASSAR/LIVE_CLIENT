@@ -24,10 +24,6 @@ export default function Penerimaan() {
     const [cari, setCari] = useState("")
     const [reload, setReload] = useState(false)
 
-    const titles = [
-        "No", "Tanggal Transaksi", "Jenis Transaksi", "Kode Akun", "Nilai", "Update"
-    ]
-
     const jumlahRow = [
         "10", "25", "50", "100"
     ]
@@ -169,7 +165,7 @@ export default function Penerimaan() {
                     }
                     {/* <Table titles={titles}  data={dataListPenerimaan} isLoading={isLoading} setIsLoading={setIsDelete} category={"penerimaan"} />  */}
                     <TableWithPagination 
-                        tittles={titles}  
+                
                         data={dataListPenerimaan}  
                         category={"penerimaan"}  
                         isLoading={isLoading}  

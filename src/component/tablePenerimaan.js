@@ -50,11 +50,6 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
     const handleShowModalDetail = (value) => {
         setShowModalDetail(true)
         setDetailData({...value})
-        // setUuid(value)
-    }
-
-    const getDetail = () => {
-        
     }
 
     const handleDelete = () => {
@@ -91,8 +86,8 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         {
-                            tittles &&  
-                            tittles.map((title, index) => {
+                            titleDefault &&  
+                            titleDefault.map((title, index) => {
                                 return(
                                     <th key={index} scope="col" className="px-3 py-3">
                                         {title}
