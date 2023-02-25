@@ -122,8 +122,6 @@ export default function TambahPenerimaan() {
                             height={"100%"}
                         />
                     </div>
-
-        
                     <div className="flex h-auto  justify-between items-center p-4 mb-4 rounded bg-gray-50">
                         <form className="w-full" onSubmit={handlePostPenerimaan}>
                             <div className="mb-6">

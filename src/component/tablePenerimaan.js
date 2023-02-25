@@ -12,6 +12,7 @@ import ButtonDetail from "./buttonDetail"
 import rupiah from "../helpers/rupiah"
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import ModalDetail from "./modalDetail"
 
 export default function TablePenerimaan ({data,  isLoading , category, tittles, setReload, reload}) {
     const MySwal = withReactContent(Swal)
@@ -20,9 +21,14 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
     const [showModalDel, setShowModalDel] = useState(false)
     const [showModalDetail, setShowModalDetail] = useState(false)
     const [uuId, setUuid] = useState("")
+    const [detailData, setDetailData] = useState({})
 
     const titleDefault = [
         "No", "Tanggal Transaksi", "Jenis Transaksi", "Kode Akun", "Nilai", "Update"
+    ]
+    
+    const title = [
+        "tgl_transaksi", "jns_transaksi","kode_akun", "bayar", "status_update"
     ]
     
     const handleModalEdit = (payload) => {
@@ -41,8 +47,14 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
         setReload(!reload)
     }
 
-    const handleShowModalDetail = () => {
-        setShowModalDetail(!showModalDetail)
+    const handleShowModalDetail = (value) => {
+        setShowModalDetail(true)
+        setDetailData({...value})
+        // setUuid(value)
+    }
+
+    const getDetail = () => {
+        
     }
 
     const handleDelete = () => {
@@ -69,7 +81,7 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
    
     return(
         <div className={`relative overflow-x-auto shadow-md sm:rounded-lg ${isLoading ? "h-96" : "h-auto"} overflow-y-auto mb-4`}>
-            
+            <ModalDetail data={detailData}  showModal={showModalDetail} setShowModal={setShowModalDetail} title={title} />
             {   isLoading && 
                 <div className="w-full h-full">
                     <LoadingSpinner />
@@ -177,7 +189,7 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                                         <td className="px-3 py-2">
                                             {
                                                 item["status_update"] === 'Posting' ?
-                                                <ButtonDetail key={index} handleFunction={handleShowModalDetail} showModal={showModalDetail} itemData={item} category={category} />
+                                                <ButtonDetail key={index} handleFunction={() => handleShowModalDetail(item)} />
                                                 :
                                                 <div>
                                                     <ButtonEdit handleFunction={handleModalEdit} title="Edit" color="yellow" data={item} />
