@@ -17,6 +17,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import handleKeyPress from "../../helpers/handleKeyPress";
 import routeName from "../../helpers/routeName";
+import Select2Akun from "../../component/select2Akun";
 
 export default function TambahPengeluaran() {
     const MySwal = withReactContent(Swal)
@@ -40,30 +41,39 @@ export default function TambahPengeluaran() {
         dispatch(clearErrorMessage())
         dispatch(clearPengeluaranStatus())
         setIsLoading(true)
-        const payload = {
-            tangalTransaksi: dateFormat(tglTransaksi, "isoDate") ,
-            kodeAkun:kodeAkun,
-            bayar:normalizeBayar(bayar),
-            jnsTransaksi:jnsTransaksi,
-        }
-        dispatch(pengeluaranApi.postPengeluaran(payload))
-        .then(() => {
-            setIsLoading(false)
-            setTglTransaksi("")
-            setKodeAkun("")
-            setBayar("")
-            MySwal.fire({
-                icon: "success",
-                title: "Data Pengeluaran Berhasil Ditambahkan",
-            })
-        })
-        .catch((err) => {
-            setIsLoading(false)
+        if(!kodeAkun) {
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Menambahkan Data Pengeluaran",
-              });
-        })
+                title: "Isi kode akun terlebih dahulu",
+            });
+            setIsLoading(false)
+        } else {         
+            const payload = {
+                tangalTransaksi: dateFormat(tglTransaksi, "isoDate") ,
+                kodeAkun:kodeAkun.value.kode,
+                namaAkun: kodeAkun.value.uraian,
+                bayar:normalizeBayar(bayar),
+                jnsTransaksi:jnsTransaksi,
+            }
+            dispatch(pengeluaranApi.postPengeluaran(payload))
+            .then(() => {
+                setIsLoading(false)
+                setTglTransaksi("")
+                setKodeAkun("")
+                setBayar("")
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Pengeluaran Berhasil Ditambahkan",
+                })
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Data Pengeluaran",
+                  });
+            })
+        }
     }
  
     return(
@@ -100,8 +110,14 @@ export default function TambahPengeluaran() {
                             plugins={[ dayGridPlugin ]}
                             initialView="dayGridMonth"
                             height={"100%"}
+                            events={[
+                                { title: 'Posting', date: '2023-02-01' },
+                                { title: 'Pending', date: '2023-02-02' }
+                            ]}
                         />
                     </div>
+
+
                     <div className="flex h-auto  justify-between items-center p-4 mb-4 rounded bg-gray-50">
                         <form className="w-full" onSubmit={handleTambahPengeluaran} >
                             <div className="mb-6">
@@ -136,30 +152,8 @@ export default function TambahPengeluaran() {
                             </div>        
                             
                             <div className="mb-6 w-full">
-                                <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Akun</label>
-                                <input 
-                                        type="text" 
-                                        id="KodeAkun" 
-                                        className="
-                                                    block 
-                                                    w-full 
-                                                    p-2 
-                                                    text-gray-900 
-                                                    border 
-                                                    border-gray-300 
-                                                    rounded-lg 
-                                                    bg-gray-50 
-                                                    sm:text-xs 
-                                                    focus:ring-blue-500 
-                                                    focus:border-blue-500 
-                                                    "
-                                        value={kodeAkun}
-                                        onKeyDown={handleKeyPress}
-                                        onChange={(e) => {setKodeAkun(e.target.value)}}
-                                        required
-                                         
-                                />
-                                <p className="mt-2 text-sm"><span className="font-medium">Exp: 544467</span> Input harus berupa angka</p>
+                                <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Akun</label>               
+                                <Select2Akun value={kodeAkun} setValue={setKodeAkun} category="pengeluaran" />
                             </div>
 
                             <div className="mb-6 w-full">

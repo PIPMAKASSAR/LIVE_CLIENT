@@ -5,8 +5,34 @@ export const dataSidebar = [
         name: "Dashboard",
         link: routeName.dashboard,
     },
+    // {   
+    //     name: "Master",
+    //     subMenu: [
+    //         {
+    //             name: "Penerima/Pihak Ketiga",
+    //             link: routeName.listPenerimaPihakTiga,
+    //         },
+    //         {
+    //             name: "Mak",
+    //             link: routeName.mak,
+    //         }
+    //     ]
+    // },
+    // {
+    //     name: "Keuangan",
+    //     subMenu: [
+    //         {
+    //             name: "Rincian Satker",
+    //             link: routeName.satker
+    //         },
+    //         {
+    //             name: "Belanja",
+    //             link: routeName.belanja
+    //         }
+    //     ]
+    // },
     {
-        name: "Keuangan",
+        name: "Integrasi Bios",
         subMenu:[
             {
                 name:"Penerimaan",

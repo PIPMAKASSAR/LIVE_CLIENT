@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import routeName from "../../helpers/routeName";
 import handleKeyPress from "../../helpers/handleKeyPress";
+import Select2Akun from "../../component/select2Akun";
 
 
 export default function TambahPenerimaan() {
@@ -45,31 +46,40 @@ export default function TambahPenerimaan() {
         dispatch(clearPenerimaanStatus())
         dispatch(clearErrorMessage())
         setIsLoading(true)
-        const payload = {
-            tangalTransaksi: dateFormat(tglTransaksi, "isoDate") ,
-            kodeAkun:kodeAkun,
-            bayar:normalizeBayar(bayar),
-            jnsTransaksi:jnsTransaksi,
-        }
-        dispatch(penerimaanApi.postTambahPenerimaan(payload))
-        .then(() => {
-            setIsLoading(false)
-            setTglTransaksi("")
-            setKodeAkun("")
-            setBayar("")
-            MySwal.fire({
-                icon: "success",
-                title: "Data Penerimaan Berhasil Ditambahkan",
-            })
-        })
-        .catch((err) => {
-            setIsLoading(false)
+        if(!kodeAkun) {
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Menambahkan Data Penerimaan",
-              });
-            
-        })
+                title: "Isi kode akun terlebih dahulu",
+            });
+            setIsLoading(false)
+        } else {
+            const payload = {
+                tangalTransaksi: dateFormat(tglTransaksi, "isoDate") ,
+                kodeAkun:kodeAkun.value.kode,
+                namaAkun: kodeAkun.value.uraian,
+                bayar:normalizeBayar(bayar),
+                jnsTransaksi:jnsTransaksi,
+            }
+            dispatch(penerimaanApi.postTambahPenerimaan(payload))
+            .then(() => {
+                setIsLoading(false)
+                setTglTransaksi("")
+                setKodeAkun("")
+                setBayar("")
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Penerimaan Berhasil Ditambahkan",
+                })
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Data Penerimaan",
+                  });
+                
+            })
+        }
     }
 
     useEffect(() => {
@@ -112,8 +122,14 @@ export default function TambahPenerimaan() {
                             plugins={[ dayGridPlugin ]}
                             initialView="dayGridMonth"
                             height={"100%"}
+                            events={[
+                                { title: 'Posting', date: '2023-02-01' },
+                                { title: 'Pending', date: '2023-02-02' }
+                            ]}
                         />
                     </div>
+
+        
                     <div className="flex h-auto  justify-between items-center p-4 mb-4 rounded bg-gray-50">
                         <form className="w-full" onSubmit={handlePostPenerimaan}>
                             <div className="mb-6">
@@ -149,7 +165,8 @@ export default function TambahPenerimaan() {
                             
                             <div className="mb-6 w-full">
                                 <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Akun</label>
-                                <input 
+                                <Select2Akun value={kodeAkun} setValue={setKodeAkun} category={"penerimaan"} />
+                                {/* <input 
                                         type="text" 
                                         id="KodeAkun" 
                                         className="
@@ -169,8 +186,8 @@ export default function TambahPenerimaan() {
                                         onKeyDown = {handleKeyPress}
                                         onChange={(e) => setKodeAkun(e.target.value)}
                                         required 
-                                />
-                                <p className="mt-2 text-sm"><span className="font-medium">Exp: 544467</span> Input harus berupa angka</p>
+                                /> */}
+                                {/* <p className="mt-2 text-sm"><span className="font-medium">Exp: 544467</span> Input harus berupa angka</p> */}
                             </div>
 
                             <div className="mb-6 w-full">

@@ -12,27 +12,33 @@ import normalizeBayar from "../helpers/normalizeBayar";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import handleKeyPress from "../helpers/handleKeyPress";
+import Select2BankEdit from "./select2BankEdit";
+import Select2RekeningEdit from "./select2RekeningEdit";
 
-export default function FormEditSaldoOperasional () {
+export default function FormEditSaldoOperasional ({data, reload, setReload}) {
+    const bank = {
+        kode: data["kdbank"],
+        uraian: data["nama_bank"]
+    }
+    const rekening = {
+        kode: data["no_rekening"],
+        uraian:data["nama_rekening"]
+    }
     const MySwal = withReactContent(Swal)
-    const data = useSelector(state => state.saldoOperasional.item)
     const dispatch = useDispatch()
-    const statusSaldoOperasional = useSelector(state => state.saldoOperasional.edit)
-    const statusError = useSelector(state => state.errorHandling.getError)
-    const convertDate = dateFormat(data["tgl_transaksi"], "dd/mm/yyyy") 
-    const [uuid, setUuid] = useState(data["uuid"])
-    const [tglTransaksi, setTglTransaksi] = useState(data["tgl_transaksi"])
-    const [kodeBank, setKodeBank] = useState(data["kdbank"])
-    const [noRekening, setNoRekening] = useState(data["no_rekening"])
-    const [unit, setUnit] = useState(data["unit"])
-    const [saldoAkhir, setSaldoAkhir] = useState(data["saldo_akhir"])
+    const [uuid, setUuid] = useState("")
+    const [tglTransaksi, setTglTransaksi] = useState("")
+    const [kodeBank, setKodeBank] = useState("")
+    const [noRekening, setNoRekening] = useState("")
+    const [unit, setUnit] = useState("")
+    const [saldoAkhir, setSaldoAkhir] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         setUuid(data["uuid"])
         setTglTransaksi(dateFormat(data["tgl_transaksi"], "yyyy-mm-dd"))
-        setKodeBank(data["kdbank"])
-        setNoRekening(data["no_rekening"])
+        setKodeBank(bank)
+        setNoRekening(rekening)
         setUnit(data["unit"])
         setSaldoAkhir(handleChangeRupiah(data["saldo_akhir"]))
     },[data])
@@ -45,13 +51,16 @@ export default function FormEditSaldoOperasional () {
         const payload = {
             "uuid" : uuid,
             "tglTransaksi": dateFormat(tglTransaksi, "isoDate") ,
-            "kodeBank": kodeBank,
-            "noRekening": noRekening,
+            "kodeBank": kodeBank.kode,
+            "namaBank": kodeBank.uraian,
+            "noRekening": noRekening.kode,
+            "namaRekening": noRekening.uraian,
             "unit": unit,
             "saldoAkhir": normalizeBayar(saldoAkhir),
         }
         dispatch(saldoOperasionalApi.putSaldoOperasional(payload))
         .then(() => {
+            setReload(!reload)
             setIsLoading(false)
             MySwal.fire({
                 icon: "success",
@@ -104,53 +113,12 @@ export default function FormEditSaldoOperasional () {
                         
                         <div className="mb-6 w-full">
                             <label htmlFor="kodeBank" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Bank</label>
-                            <input 
-                                    type="text" 
-                                    id="kodeBank" 
-                                    className="
-                                                block 
-                                                w-full 
-                                                p-2 
-                                                text-gray-900 
-                                                border 
-                                                border-gray-300 
-                                                rounded-lg 
-                                                bg-gray-50 
-                                                sm:text-xs 
-                                                focus:ring-blue-500 
-                                                focus:border-blue-500 
-                                                " 
-                                    value={kodeBank}
-                                    onKeyDown={handleKeyPress}
-                                    onChange={(e) => {setKodeBank(e.target.value)}}
-                            />
-                            <p className="mt-2 text-sm"><span className="font-medium">Exp: 424111</span> Input harus berupa angka</p>
+                            <Select2BankEdit value={kodeBank} setValue={setKodeBank} />
                         </div>
 
                         <div className="mb-6 w-full">
                             <label htmlFor="noRekening" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Rekening</label>
-                            <input 
-                                    type="text" 
-                                    id="noRekening" 
-                                    className="
-                                                block 
-                                                w-full 
-                                                p-2 
-                                                text-gray-900 
-                                                border 
-                                                border-gray-300 
-                                                rounded-lg 
-                                                bg-gray-50 
-                                                sm:text-xs 
-                                                focus:ring-blue-500 
-                                                focus:border-blue-500 
-                                                " 
-                                    value={noRekening}
-                                    onKeyDown={handleKeyPress}
-                                    onChange={(e) => {setNoRekening(e.target.value)}}
-                                    required
-                            />
-                            <p className="mt-2 text-sm"><span className="font-medium">Exp: 1328282393398</span> Input harus berupa angka</p>
+                            <Select2RekeningEdit value={noRekening} setValue={setNoRekening} />
                         </div>
 
                         <div className="mb-6 w-full">

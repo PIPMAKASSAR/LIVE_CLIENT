@@ -24,28 +24,22 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
     const [uuId, setUuid] = useState("")
     const [detailData, setDetailData] = useState({})
 
-    const titles = [
-        "No", "Tanggal Transaksi", "Kode Bank", "No Rekening","Saldo Akhir", "Update"
+    const titleDefault = [
+        "No", "Tanggal Transaksi", "Bank","Rekening","Saldo Akhir", "Update"
     ]
 
     const title = [
         "uuid", "tgl_transaksi","kdbank", "no_rekening", "saldo_akhir","status_update"
     ]
-
-    const handleModalEdit = (payload) => {
-        setShowModalEdit(true)
-        const dataTes = {...payload} 
-        dispatch(setItemEdit(dataTes))
-    }
     
     const handleModalDelete = (payload) => {
         setUuid(payload)
         setShowModalDel(true)
     }
 
-    const handleShowModalEdit = () => {
+    const handleShowModalEdit = (value) => {
         setShowModalEdit(!showModalEdit)
-        setReload(!reload)
+        setDetailData({...value})
     }
     const handleShowModalDetail = (value) => {
         setShowModalDetail(true)
@@ -56,7 +50,6 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
         const payload = {
             uuid: uuId
         }
-        console.log(uuId)
         dispatch(saldoDanaKelolaanApi.deleteSaldoDanaKelolaan(payload))
         .then(() => {
             setReload(!reload)
@@ -76,6 +69,7 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
     return(
         <div className={`relative overflow-x-auto shadow-md sm:rounded-lg ${isLoading ? "h-96" : "h-auto"} overflow-y-auto mb-4`}>
             <ModalDetail data={detailData}  showModal={showModalDetail} setShowModal={setShowModalDetail} title={title} />
+            <ModalEdit data={detailData} category={category} showModal={showModalEdit} setShowModal={setShowModalEdit} setReload={setReload} reload={reload} />
             {   isLoading && 
                 <div className="w-full h-full">
                     <LoadingSpinner />
@@ -85,8 +79,8 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         {
-                            titles &&  
-                            titles.map((title, index) => {
+                            titleDefault &&  
+                            titleDefault.map((title, index) => {
                                 return(
                                     <th key={index} scope="col" className="px-3 py-3">
                                         {title}
@@ -106,7 +100,7 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
                             data.map((item, index) => {
                                 return(
                                     <tr key={index} className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 mx:h-1">
-                                        <th  scope="row" 
+                                        <td  scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -117,9 +111,9 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
                                                         
                                                         `}
                                         >
-                                            {item["uuid"]}
-                                        </th>
-                                        <th scope="row" 
+                                            {index + 1}
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -130,32 +124,32 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
                                                         `}
                                         >
                                             {item["tgl_transaksi"]}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td  
                                             className={`
                                                         px-3 
                                                         py-2 
                                                         font-medium 
                                                         text-gray-900 
                                                         whitespace-nowrap 
-                                                        dark:text-white
+                                                        dark:text-white  
                                                         `}
                                         >
-                                            {item["kdbank"]}
-                                        </th>
-                                        <th scope="row" 
+                                            <p className="truncate w-40 line-clamp">{item["kdbank"]}: {item["nama_bank"]}</p>
+                                        </td>
+                                        <td  
                                             className={`
                                                         px-3 
                                                         py-2 
                                                         font-medium 
                                                         text-gray-900 
                                                         whitespace-nowrap 
-                                                        dark:text-white
+                                                        dark:text-white  
                                                         `}
                                         >
-                                            {item["no_rekening"]}
-                                        </th>
-                                        <th scope="row" 
+                                            <p className="truncate w-48 line-clamp">{item["no_rekening"]}: {item["nama_rekening"]}</p>
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -166,8 +160,8 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
                                                         `}
                                         >
                                             {rupiah(item["saldo_akhir"], "Rp.")}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -179,16 +173,15 @@ export default function TableSaldoDanaKelolaan ({data,  isLoading , category, se
                                                         `}
                                         >
                                             {item["status_update"]}  
-                                        </th>
+                                        </td>
                                         <td className="px-3 py-2">
                                             {
                                                 item["status_update"] === 'Posting' ?
                                                 <ButtonDetail key={index} handleFunction={() => handleShowModalDetail(item)} />
                                                 :
-                                                <div>
-                                                    <ButtonEdit handleFunction={handleModalEdit} title="Edit" color="yellow" data={item} />
-                                                    <ModalEdit handleFunction={handleShowModalEdit} category={category} showModal={showModalEdit} setShowModal={setShowModalEdit} setReload={setReload} reload={reload} />
-                                                    <ButtonDelete handleFunction={handleModalDelete} uuid={item["uuid"]} title="Hapus" color="red" />
+                                                <div className="flex">
+                                                    <ButtonEdit handleFunction={() => handleShowModalEdit(item)} title="Edit" color="yellow" data={item} />
+                                                    <ButtonDelete handleFunction={() => handleModalDelete(item["uuid"])} uuid={item["uuid"]} title="Hapus" color="red" />
                                                     <ModalDelete handleFunction={handleDelete} category={category} showModal={showModalDel} setShowModal={setShowModalDel} />
                                                 </div>
                                             }

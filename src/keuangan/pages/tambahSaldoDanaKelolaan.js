@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ErrorMsg from "../../component/errorMsg";
-import SuccessMsg from "../../component/successMsg";
 import Button from "../../component/button";
 import { useNavigate } from "react-router-dom";
 import FullCalendar from '@fullcalendar/react' // must go before plugins
@@ -16,8 +14,9 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import handleKeyPress from "../../helpers/handleKeyPress";
 import routeName from "../../helpers/routeName";
-
 import dateFormat from "dateformat";
+import Select2Bank from "../../component/select2bank";
+import Select2Rekening from "../../component/select2Rekening";
 
 
 export default function TambahSaldoDanaKelolaan() {
@@ -25,8 +24,6 @@ export default function TambahSaldoDanaKelolaan() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const titlesBreadCump = ["Keuangan", "Saldo Dana Kelolaan"]
-    const statusSaldoDanaKelolaan = useSelector(state => state.saldoDanaKelolaan.tambah)
-    const errorMessage = useSelector(state => state.errorHandling.getError)
     const [tglTransaksi, setTglTransaksi] = useState("")
     const [kodeBank, setKodeBank] = useState("")
     const [noRekening, setNoRekening] = useState("")
@@ -42,31 +39,41 @@ export default function TambahSaldoDanaKelolaan() {
         dispatch(clearErrorMessage())
         dispatch(clearSaldoDanaKelolaanStatus())
         setIsLoading(true)
-        const payload = {
-            "tglTransaksi": dateFormat(tglTransaksi, "isoDate") ,
-            "kodeBank": kodeBank,
-            "noRekening": noRekening,
-            "saldoAkhir": normalizeBayar(saldoAkhir),
-        }
-        dispatch(saldoDanaKelolaanApi.postSaldoDanaKelolaan(payload))
-        .then(() => {
-            setIsLoading(false)
-            setTglTransaksi("")
-            setKodeBank("")
-            setNoRekening("")
-            setSaldoAkhir("")
-            MySwal.fire({
-                icon: "success",
-                title: "Data Saldo Dana Kelolaan Berhasil Ditambahkan",
-            })
-        })
-        .catch((err) => {
-            setIsLoading(false)
+        if(!kodeBank || !noRekening) {
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Menambahkan Data Saldo Dana kelolaan",
-              });
-        })
+                title: "Lengkapi data terlebih dahulu",
+            });
+            setIsLoading(false)
+        } else {
+            const payload = {
+                "tglTransaksi": dateFormat(tglTransaksi, "isoDate") ,
+                "kodeBank": kodeBank.value.kode,
+                "namaBank": kodeBank.value.uraian,
+                "noRekening": noRekening.value.kode,
+                "namaRekening": noRekening.value.uraian,
+                "saldoAkhir": normalizeBayar(saldoAkhir),
+            }
+            dispatch(saldoDanaKelolaanApi.postSaldoDanaKelolaan(payload))
+            .then(() => {
+                setIsLoading(false)
+                setTglTransaksi("")
+                setKodeBank("")
+                setNoRekening("")
+                setSaldoAkhir("")
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Saldo Dana Kelolaan Berhasil Ditambahkan",
+                })
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Data Saldo Dana kelolaan",
+                  });
+            })
+        }
     }
     return(
         <div className="p-9 rounded-lg h-full w-full">
@@ -102,8 +109,14 @@ export default function TambahSaldoDanaKelolaan() {
                             plugins={[ dayGridPlugin ]}
                             initialView="dayGridMonth"
                             height={"100%"}
+                            events={[
+                                { title: 'Posting', date: '2023-02-01' },
+                                { title: 'Pending', date: '2023-02-02' }
+                            ]}
                         />
                     </div>
+
+
                     <div className="flex h-auto  justify-between items-center p-4 mb-4 rounded bg-gray-50">
                         <form className="w-full" onSubmit={handleTambah}>
                             <div className="mb-6">
@@ -140,53 +153,12 @@ export default function TambahSaldoDanaKelolaan() {
                             
                             <div className="mb-6 w-full">
                                 <label htmlFor="kodeBank" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Bank</label>
-                                <input 
-                                        type="text" 
-                                        id="kodeBank" 
-                                        className="
-                                                    block 
-                                                    w-full 
-                                                    p-2 
-                                                    text-gray-900 
-                                                    border 
-                                                    border-gray-300 
-                                                    rounded-lg 
-                                                    bg-gray-50 
-                                                    sm:text-xs 
-                                                    focus:ring-blue-500 
-                                                    focus:border-blue-500 
-                                                    " 
-                                        value={kodeBank}
-                                        onKeyDown={handleKeyPress}
-                                        onChange={(e) => {setKodeBank(e.target.value)}}
-                                />
-                                <p className="mt-2 text-sm"><span className="font-medium">Exp: 424111</span> Input harus berupa angka</p>
+                                <Select2Bank value={kodeBank} setValue={setKodeBank} />
                             </div>
 
                             <div className="mb-6 w-full">
                                 <label htmlFor="noRekening" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Rekening</label>
-                                <input 
-                                        type="text" 
-                                        id="noRekening" 
-                                        className="
-                                                    block 
-                                                    w-full 
-                                                    p-2 
-                                                    text-gray-900 
-                                                    border 
-                                                    border-gray-300 
-                                                    rounded-lg 
-                                                    bg-gray-50 
-                                                    sm:text-xs 
-                                                    focus:ring-blue-500 
-                                                    focus:border-blue-500 
-                                                    " 
-                                        value={noRekening}
-                                        onKeyDown={handleKeyPress}
-                                        onChange={(e) => {setNoRekening(e.target.value)}}
-                                        required
-                                />
-                                <p className="mt-2 text-sm"><span className="font-medium">Exp: 1328282393398</span> Input harus berupa angka</p>
+                                <Select2Rekening value={noRekening} setValue={setNoRekening} />
                             </div>
 
                             <div className="mb-6 w-full">

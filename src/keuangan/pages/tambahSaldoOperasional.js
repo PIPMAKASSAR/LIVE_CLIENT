@@ -17,6 +17,8 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import handleKeyPress from "../../helpers/handleKeyPress";
 import routeName from "../../helpers/routeName";
+import Select2Bank from "../../component/select2bank";
+import Select2Rekening from "../../component/select2Rekening";
 
 export default function TambahSaldoOperasional() {
     const MySwal = withReactContent(Swal)
@@ -42,33 +44,43 @@ export default function TambahSaldoOperasional() {
         dispatch(clearErrorMessage())
         dispatch(clearSaldoOperasionalStatus())
         setIsLoading(true)
-        const payload = {
-            "tglTransaksi": dateFormat(tglTransaksi, "isoDate") ,
-            "kodeBank": kodeBank,
-            "noRekening": noRekening,
-            "unit": unit,
-            "saldoAkhir": normalizeBayar(saldoAkhir),
-        }
-        dispatch(saldoOperasionalApi.postSaldoOperasional(payload))
-        .then(() => {
-            setIsLoading(false)
-            setTglTransaksi("")
-            setKodeBank("")
-            setNoRekening("")
-            setUnit("")
-            setSaldoAkhir("")
-            MySwal.fire({
-                icon: "success",
-                title: "Data Saldo Operasional Berhasil Ditambahkan",
-            })
-        })
-        .catch((err) => {
-            setIsLoading(false)
+        if(!kodeBank || !noRekening) {
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Menambahkan Data Operasional",
-              });
-        })
+                title: "Lengkapi data terlebih dahulu",
+            });
+            setIsLoading(false)
+        } else {
+            const payload = {
+                "tglTransaksi": dateFormat(tglTransaksi, "isoDate") ,
+                "kodeBank": kodeBank.value.kode,
+                "namaBank": kodeBank.value.uraian,
+                "noRekening": noRekening.value.kode,
+                "namaRekening": noRekening.value.uraian,
+                "unit": unit,
+                "saldoAkhir": normalizeBayar(saldoAkhir),
+            }
+            dispatch(saldoOperasionalApi.postSaldoOperasional(payload))
+            .then(() => {
+                setIsLoading(false)
+                setTglTransaksi("")
+                setKodeBank("")
+                setNoRekening("")
+                setUnit("")
+                setSaldoAkhir("")
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Saldo Operasional Berhasil Ditambahkan",
+                })
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Data Operasional",
+                  });
+            })
+        }
     }
  
     return(
@@ -105,6 +117,10 @@ export default function TambahSaldoOperasional() {
                             plugins={[ dayGridPlugin ]}
                             initialView="dayGridMonth"
                             height={"100%"}
+                            events={[
+                                { title: 'Posting', date: '2023-02-01' },
+                                { title: 'Pending', date: '2023-02-02' }
+                            ]}
                         />
                     </div>
 
@@ -145,53 +161,12 @@ export default function TambahSaldoOperasional() {
                             
                             <div className="mb-6 w-full">
                                 <label htmlFor="kodeBank" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Bank</label>
-                                <input 
-                                        type="text" 
-                                        id="kodeBank" 
-                                        className="
-                                                    block 
-                                                    w-full 
-                                                    p-2 
-                                                    text-gray-900 
-                                                    border 
-                                                    border-gray-300 
-                                                    rounded-lg 
-                                                    bg-gray-50 
-                                                    sm:text-xs 
-                                                    focus:ring-blue-500 
-                                                    focus:border-blue-500 
-                                                    " 
-                                        value={kodeBank}
-                                        onKeyDown={handleKeyPress}
-                                        onChange={(e) => {setKodeBank(e.target.value)}}
-                                />
-                                <p className="mt-2 text-sm"><span className="font-medium">Exp: 424111</span> Input harus berupa angka</p>
+                                <Select2Bank value={kodeBank} setValue={setKodeBank} />
                             </div>
 
                             <div className="mb-6 w-full">
                                 <label htmlFor="noRekening" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Rekening</label>
-                                <input 
-                                        type="text" 
-                                        id="noRekening" 
-                                        className="
-                                                    block 
-                                                    w-full 
-                                                    p-2 
-                                                    text-gray-900 
-                                                    border 
-                                                    border-gray-300 
-                                                    rounded-lg 
-                                                    bg-gray-50 
-                                                    sm:text-xs 
-                                                    focus:ring-blue-500 
-                                                    focus:border-blue-500 
-                                                    " 
-                                        value={noRekening}
-                                        onKeyDown={handleKeyPress}
-                                        onChange={(e) => {setNoRekening(e.target.value)}}
-                                        required
-                                />
-                                <p className="mt-2 text-sm"><span className="font-medium">Exp: 1328282393398</span> Input harus berupa angka</p>
+                                <Select2Rekening value={noRekening} setValue={setNoRekening} />
                             </div>
 
                             <div className="mb-6 w-full">

@@ -4,6 +4,7 @@ import logo from "../LOGO-PIP.png"
 import LoginForm from "../component/loginForm"
 import ResetPassForm from "../component/ResetPassForm"
 import "./login.css"
+import routeName from "../helpers/routeName"
 
 export default function Login () {
     const navigate = useNavigate()
@@ -11,7 +12,7 @@ export default function Login () {
 
     useEffect(() => {
         if(localStorage.getItem('token')) {
-            navigate('/testing')
+            navigate(routeName.dashboard)
         }
     }, [])
     return(
@@ -62,7 +63,7 @@ export default function Login () {
                         className="
                                     flex 
                                     flex-col 
-                                    p-9 
+                                    px-9 
                                     leading-normal
                                     rounded-r-lg
                                     h-full 

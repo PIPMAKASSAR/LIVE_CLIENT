@@ -21,6 +21,7 @@ export default function Layout() {
             localStorage.clear('user')   
             navigate(routeName.login)
         } 
+
         if(token) {
             const expirationTime = JSON.parse(atob(token.split('.')[1])).exp;
             const currentTime = new Date().getTime() / 1000;
@@ -31,6 +32,7 @@ export default function Layout() {
             }
         }
     },[token])
+
     const handleSideBar = ()  => {
         setIsSideOpen(!isSideOpen)
     }

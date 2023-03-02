@@ -7,6 +7,7 @@
     "@fullcalendar/daygrid": "^6.1.1",
     "@fullcalendar/react": "^6.1.2",
     "@reduxjs/toolkit": "^1.9.2",
+    "@tailwindcss/forms": "^0.5.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,6 +16,7 @@
     "dateformat": "^5.0.3",
     "flowbite": "^1.6.3",
     "flowbite-react": "^0.3.8",
+    "jquery": "^3.6.3",
     "postcss": "^8.4.21",
     "react": "^18.2.0",
     "react-calendar": "^4.0.0",
@@ -24,8 +26,10 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.0",
     "react-scripts": "5.0.1",
+    "react-select": "^5.7.0",
     "recharts": "^2.3.2",
     "redux": "^4.2.1",
+    "select2": "^4.1.0-rc.0",
     "sweetalert2": "^11.7.1",
     "sweetalert2-react-content": "^5.0.7",
     "tailwindcss": "^3.2.4",
@@ -54,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "alias": {
+    "react-select$": "react-select/dist/react-select.css"
   }
 }

@@ -18,37 +18,28 @@ import withReactContent from "sweetalert2-react-content";
 export default function TableSaldoOperasional ({data,  isLoading , category, setReload, reload}) {
     const MySwal = withReactContent(Swal)
     const dispatch = useDispatch()
-    const [isShowBd, setIsShowBd] = useState(false)
     const [showModalEdit, setShowModalEdit] = useState(false)
     const [showModalDel, setShowModalDel] = useState(false)
     const [showModalDetail, setShowModalDetail] = useState(false)
     const [uuId, setUuid] = useState("")
-    const [dataEdit, setDataEdit] = useState({})
     const [detailData, setDetailData] = useState({})
 
     const titleDefault = [
-        "No", "Tanggal Transaksi", "Kode Bank", "No Rekening", "Unit", "Saldo Akhir", "Update"
+        "No", "Tanggal Transaksi", "Bank", "Rekening", "Unit", "Saldo Akhir", "Update"
     ]
 
     const title = [
         "uuid", "tgl_transaksi","kdbank", "no_rekening", "unit", "saldo_akhir","status_update"
     ]
-
-    const handleModalEdit = (payload) => {
-        setShowModalEdit(true)
-        setDataEdit()
-        const dataTes = {...payload} 
-        dispatch(setItemSaldoOperasional(dataTes))
-    }
     
     const handleModalDelete = (payload) => {
         setUuid(payload)
         setShowModalDel(true)
     }
 
-    const handleShowModalEdit = () => {
+    const handleShowModalEdit = (value) => {
         setShowModalEdit(!showModalEdit)
-        setReload(!reload)
+        setDetailData({...value})
     }
 
     const handleShowModalDetail = (value) => {
@@ -79,6 +70,7 @@ export default function TableSaldoOperasional ({data,  isLoading , category, set
     return(
         <div className={`relative overflow-x-auto shadow-md sm:rounded-lg ${isLoading ? "h-96" : "h-auto"} overflow-y-auto mb-4`}>
             <ModalDetail data={detailData}  showModal={showModalDetail} setShowModal={setShowModalDetail} title={title} />
+            <ModalEdit data={detailData} category={category} showModal={showModalEdit} setShowModal={setShowModalEdit} setReload={setReload} reload={reload} />
             {   isLoading && 
                 <div className="w-full h-full">
                     <LoadingSpinner />
@@ -109,7 +101,7 @@ export default function TableSaldoOperasional ({data,  isLoading , category, set
                             data.map((item, index) => {
                                 return(
                                     <tr key={index} className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 mx:h-1">
-                                        <th  scope="row" 
+                                        <td  scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -120,9 +112,9 @@ export default function TableSaldoOperasional ({data,  isLoading , category, set
                                                         
                                                         `}
                                         >
-                                            {item["uuid"]}
-                                        </th>
-                                        <th scope="row" 
+                                            {index + 1}
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -133,32 +125,32 @@ export default function TableSaldoOperasional ({data,  isLoading , category, set
                                                         `}
                                         >
                                             {item["tgl_transaksi"]}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td  
                                             className={`
                                                         px-3 
                                                         py-2 
                                                         font-medium 
                                                         text-gray-900 
                                                         whitespace-nowrap 
-                                                        dark:text-white
+                                                        dark:text-white  
                                                         `}
                                         >
-                                            {item["kdbank"]}
-                                        </th>
-                                        <th scope="row" 
+                                            <p className="truncate w-40 line-clamp">{item["kdbank"]}: {item["nama_bank"]}</p>
+                                        </td>
+                                        <td  
                                             className={`
                                                         px-3 
                                                         py-2 
                                                         font-medium 
                                                         text-gray-900 
                                                         whitespace-nowrap 
-                                                        dark:text-white
+                                                        dark:text-white  
                                                         `}
                                         >
-                                            {item["no_rekening"]}
-                                        </th>
-                                        <th scope="row" 
+                                            <p className="truncate w-48 line-clamp">{item["no_rekening"]}: {item["nama_rekening"]}</p>
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -169,8 +161,8 @@ export default function TableSaldoOperasional ({data,  isLoading , category, set
                                                         `}
                                         >
                                             {item["unit"]}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -181,8 +173,8 @@ export default function TableSaldoOperasional ({data,  isLoading , category, set
                                                         `}
                                         >
                                             {rupiah(item["saldo_akhir"], "Rp.")}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -194,16 +186,15 @@ export default function TableSaldoOperasional ({data,  isLoading , category, set
                                                         `}
                                         >
                                             {item["status_update"]}  
-                                        </th>
+                                        </td>
                                         <td className="px-3 py-2">
                                             {
                                                 item["status_update"] === 'Posting' ?
                                                 <ButtonDetail key={index} handleFunction={() => handleShowModalDetail(item)} />
                                                 :
-                                                <div>
-                                                    <ButtonEdit handleFunction={handleModalEdit} title="Edit" color="yellow" data={item} />
-                                                    <ModalEdit handleFunction={handleShowModalEdit} category={"saldoOperasional"} showModal={showModalEdit} setShowModal={setShowModalEdit} setReload={setReload} reload={reload} />
-                                                    <ButtonDelete handleFunction={handleModalDelete} uuid={item["uuid"]} title="Hapus" color="red" />
+                                                <div className="flex">
+                                                    <ButtonEdit handleFunction={() => handleShowModalEdit(item)} title="Edit" color="yellow" data={item} />  
+                                                    <ButtonDelete handleFunction={() => handleModalDelete(item["uuid"])} uuid={item["uuid"]} title="Hapus" color="red" />
                                                     <ModalDelete handleFunction={handleDelete} category={category} showModal={showModalDel} setShowModal={setShowModalDel} />
                                                 </div>
                                             }

@@ -13,6 +13,7 @@ const postSaldoPengelolaanKas = (data) => async (dispatch) => {
             data: {
                 "tgl_transaksi": data.tglTransaksi,
                 "kdbank": data.kodeBank,
+                "nama_bank": data.namaBank,
                 "no_bilyet": data.noBilyet,
                 "nilai_deposito": data.nilaiDeposito,
                 "nilai_bunga": data.nilaiBunga,
@@ -136,6 +137,7 @@ const putSaldoPengelolaanKas = (data) => async (dispatch) => {
                 "uuid": data.uuid,
                 "tgl_transaksi": data.tglTransaksi,
                 "kdbank": data.kodeBank,
+                "nama_bank": data.namaBank,
                 "no_bilyet": data.noBilyet,
                 "nilai_deposito": data.nilaiDeposito,
                 "nilai_bunga": data.nilaiBunga,

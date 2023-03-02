@@ -24,27 +24,21 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
     const [detailData, setDetailData] = useState({})
 
     const titleDefault = [
-        "No", "Tanggal Transaksi", "Jenis Transaksi", "Kode Akun", "Nilai", "Update"
+        "No", "Tanggal Transaksi", "Jenis Transaksi", "Kode Akun", "Nama Akun","Nilai", "Update"
     ]
     
     const title = [
         "tgl_transaksi", "jns_transaksi","kode_akun", "bayar", "status_update"
     ]
-    
-    const handleModalEdit = (payload) => {
-        setShowModalEdit(true)
-        const dataTes = {...payload} 
-        dispatch(setItemEdit(dataTes))
-    }
 
     const handleModalDelete = (payload) => {
         setUuid(payload)
         setShowModalDel(true)
     }
 
-    const handleShowModalEdit = () => {
+    const handleShowModalEdit = (value) => {
         setShowModalEdit(!showModalEdit)
-        setReload(!reload)
+        setDetailData({...value})
     }
 
     const handleShowModalDetail = (value) => {
@@ -57,7 +51,6 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
             uuid: uuId,
             jns_transaksi: "Penerimaan" 
         }
-        console.log(uuId)
         dispatch(penerimaanApi.deletePenerimaan(payload))
         .then(() => {
             setReload(!reload)
@@ -77,6 +70,8 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
     return(
         <div className={`relative overflow-x-auto shadow-md sm:rounded-lg ${isLoading ? "h-96" : "h-auto"} overflow-y-auto mb-4`}>
             <ModalDetail data={detailData}  showModal={showModalDetail} setShowModal={setShowModalDetail} title={title} />
+            <ModalEdit data={detailData} category={category} showModal={showModalEdit} setShowModal={setShowModalEdit} setReload={setReload} reload={reload} />
+        
             {   isLoading && 
                 <div className="w-full h-full">
                     <LoadingSpinner />
@@ -96,7 +91,7 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                             }) 
                         }
                         
-                        <th scope="col" className="px-3 py-3">
+                        <th scope="col" className="px-3 py-3 ">
                             Aksi
                         </th>
                     </tr>
@@ -107,7 +102,7 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                             data.map((item, index) => {
                                 return(
                                     <tr key={index} className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 mx:h-1">
-                                        <th  scope="row" 
+                                        <td  scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -119,8 +114,8 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                                                         `}
                                         >
                                             {index + 1}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -131,8 +126,8 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                                                         `}
                                         >
                                             {item["tgl_transaksi"]}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -143,8 +138,8 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                                                         `}
                                         >
                                             {item["jns_transaksi"] || item["kdbank"]}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -155,8 +150,20 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                                                         `}
                                         >
                                             {item["kode_akun"] || item["no_rekening"]}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td  
+                                            className={`
+                                                        px-3 
+                                                        py-2 
+                                                        font-medium 
+                                                        text-gray-900 
+                                                        whitespace-nowrap 
+                                                        dark:text-white  
+                                                        `}
+                                        >
+                                            <p className="truncate w-80 line-clamp">{item["nama_akun"]}</p>
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -167,8 +174,8 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                                                         `}
                                         >
                                             {rupiah(item["bayar"], "Rp.") ||rupiah(item["saldo_akhir"], "Rp.")}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -180,16 +187,15 @@ export default function TablePenerimaan ({data,  isLoading , category, tittles, 
                                                         `}
                                         >
                                             {item["status_update"]}  
-                                        </th>
+                                        </td>
                                         <td className="px-3 py-2">
                                             {
                                                 item["status_update"] === 'Posting' ?
                                                 <ButtonDetail key={index} handleFunction={() => handleShowModalDetail(item)} />
                                                 :
-                                                <div>
-                                                    <ButtonEdit handleFunction={handleModalEdit} title="Edit" color="yellow" data={item} />
-                                                    <ModalEdit handleFunction={handleShowModalEdit} category={category} showModal={showModalEdit} setShowModal={setShowModalEdit} setReload={setReload} reload={reload} />
-                                                    <ButtonDelete handleFunction={handleModalDelete} uuid={item["uuid"]} title="Hapus" color="red" />
+                                                <div className="flex">
+                                                    <ButtonEdit handleFunction={() => handleShowModalEdit(item)} title="Edit" color="yellow"/>
+                                                    <ButtonDelete handleFunction={() => handleModalDelete(item["uuid"])} uuid={item["uuid"]} title="Hapus" color="red" />
                                                     <ModalDelete handleFunction={handleDelete} category={category} showModal={showModalDel} setShowModal={setShowModalDel} />
                                                 </div>
                                             }

@@ -19,6 +19,7 @@ const postPengeluaran = (data) => async (dispatch) => {
             data: {
                 "tgl_transaksi": data.tangalTransaksi,
                 "kode_akun": data.kodeAkun,
+                "nama_akun": data.namaAkun,
                 "bayar" : data.bayar,
                 "jns_transaksi": data.jnsTransaksi,
                 "token": tokenApi()
@@ -37,6 +38,7 @@ const postPengeluaran = (data) => async (dispatch) => {
             message: message,
             status: false
         }
+        throw payload
         dispatch(failMessage(payload))
     }
 }
@@ -143,6 +145,7 @@ const putPengeluaran = (data) => async (dispatch) => {
                 "uuid": data.uuid,
                 "tgl_transaksi": data.tangalTransaksi,
                 "kode_akun": data.kodeAkun,
+                "nama_akun": data.namaAkun,
                 "bayar" : data.bayar,
                 "jns_transaksi": data.jnsTransaksi,
                 "token": tokenApi()
@@ -161,6 +164,7 @@ const putPengeluaran = (data) => async (dispatch) => {
             message: message,
             status: false
         }
+        throw payload
         dispatch(failMessage(payload))
     }
 }
@@ -189,6 +193,7 @@ const deletePengeluaran = (data) => async (dispatch) => {
             message: message,
             status: false
         }
+        throw payload
         dispatch(failMessage(payload))
     }
 }

@@ -16,6 +16,14 @@ import TambahSaldoOperasional from './keuangan/pages/tambahSaldoOperasional';
 import TambahSaldoDanaKelolaan from './keuangan/pages/tambahSaldoDanaKelolaan';
 import TambahSaldoPengelolaanKas from './keuangan/pages/tambahSaldoPengelolaanKas';
 import SaldoPengelolaanKas from './keuangan/pages/saldoPengelolaanKas';
+import Mak from './mak/mak'
+import TambahMak from './mak/tambahMak';
+import Satker from './keuanganSatker/satker/satker';
+import ListPenerimaPihakTiga from './mak/listPenerimaPihakTiga';
+import TambahPenerimaPihakTiga from './mak/tambahPenerimaPihakTiga';
+import Belanja from './keuanganSatker/belanja/belanja';
+import TambahBelanja from './keuanganSatker/belanja/tambahBelanja';
+
 import NotFound from './pages/notFound';
 import routeName from './helpers/routeName';
 
@@ -36,6 +44,13 @@ function App() {
           <Route path={routeName.tambahSaldoOperasional} element={ <TambahSaldoOperasional /> } />
           <Route path={routeName.tambahSaldoDanaKelolaan} element={ <TambahSaldoDanaKelolaan /> } />
           <Route path={routeName.tambahSaldoPeneglolaanKas} element={ <TambahSaldoPengelolaanKas /> } />
+          <Route path={routeName.mak} element={ <Mak /> } />
+          <Route path={routeName.tambahMak} element={ <TambahMak /> } />
+          <Route path={routeName.satker} element={ <Satker /> } />
+          <Route path={routeName.listPenerimaPihakTiga} element={ <ListPenerimaPihakTiga /> } />
+          <Route path={routeName.tambahListPenerimaPihakTiga} element={ <TambahPenerimaPihakTiga /> } />
+          <Route path={routeName.belanja} element={ <Belanja /> } />
+          <Route path={routeName.tambahBelanja} element={ <TambahBelanja /> } />
         </Route>
         <Route path="*" element={ <NotFound /> } />
         <Route path={routeName.login} element={<Login/>} />
