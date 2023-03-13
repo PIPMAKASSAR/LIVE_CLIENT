@@ -33,7 +33,6 @@ const uploadFileSatker = async (data) => {
 } 
 
 const getListSatker = async (data) => {
-    console.log("masuk sini")
     try {
         const result = await instance({
             method: 'post',
@@ -91,8 +90,38 @@ const getPeriodeSatker = async () => {
     }
 }
 
+const postDefaultPeriode = async (data) => {
+    try {
+        const result = await instance({
+            method: 'post',
+            url: '/set_priode_tbl_op_satker/',
+            header: authHeader(),
+            data: {
+                "periode": data,
+                "status_periode":"true",
+                token: tokenApi()
+            }
+        })
+        return result
+    }
+    catch(error) {
+        const message = (
+            error.response && 
+            error.response.data && 
+            error.response.data.message ||
+            error.message ||
+            error.toString())
+        const payload = {
+            message: message,
+            status: false
+        }
+       throw payload
+    }
+}
+
 export default {
     uploadFileSatker,
     getListSatker,
     getPeriodeSatker,
+    postDefaultPeriode,
 }

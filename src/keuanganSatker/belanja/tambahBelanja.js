@@ -16,6 +16,7 @@ import InputMakById from "../../component/inputMakById";
 
 import makApi from "../../api/makApi";
 import penerimaanPihakTigaApi from "../../api/penerimaanPihakTigaApi";
+import satkerApi from "../../api/satkerApi";
 import belanjaApi from "../../api/belanjaApi";
 import normalizeBayar from "../../helpers/normalizeBayar";
 import validator from "validator";
@@ -37,6 +38,10 @@ export default function TambahBelanja() {
     const [pphFinal, setPphFinal] = useState("")
     const [loading, setLoading] = useState(false)
     const [validUraian, setValidUraian] = useState(null)
+    const [periodeDef, setPeriodeDef] = useState({
+        value: "",
+        label: "",
+    })
     const titlesBreadCump = [ "Master","Belanja"]
 
     const handleKembali = () => {
@@ -56,43 +61,67 @@ export default function TambahBelanja() {
             setValidUraian("uraian tidak boleh memakai simbol");
             setLoading(false)
         } else {
-            const payload = {
-                "mak": mak.value,
-                "penerima": penerima.value,
-                "uraian": uraian,
-                "jumlah": normalizeBayar(nilai),
-                "ppn" : normalizeBayar(ppn),
-                "pph21": normalizeBayar(pph21),
-                "pph22": normalizeBayar(pph22),
-                "pph23": normalizeBayar(pph23),
-                "pphfinal": normalizeBayar(pphFinal),
+            const nilaiImputan = normalizeBayar(nilai)
+            const periodeMak = {
+                periode: periodeDef.value,
+                mak: mak.value
             }
-            dispatch(belanjaApi.postBelanja(payload))
-            .then(() => {
-                setLoading(false)
-                setMak("")
-                setNilai("")
-                setPenerima("")
-                setUraian("")
-                setPpn("")
-                setPph21("")
-                setPph22("")
-                setPph23("")
-                setPphFinal("")
-                setValidUraian(null)
-                MySwal.fire({
-                    icon: "success",
-                    title: "Data Belanja Berhasil Ditambahkan",
-                })
-            })
-            .catch((err) => {
+            const resultSatker = await belanjaApi.getSatketMak(periodeMak)
+            if(!resultSatker) {
                 setLoading(false)
                 MySwal.fire({
                     icon: "error",
-                    title: "Gagal Menambahkan Mak",
+                    title: "Mak tidak ditemukan di satuan kerja",
                 });
-                
-            })
+            } else if(parseInt(nilaiImputan) > parseInt(resultSatker["total_nilai"])) {
+                // const nilai1 = parseInt(nilaiImputan)
+                // const nilai2 = parseInt(resultSatker[0]["total_nilai"])
+         
+                setLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Nilai yang anda masukkan melebihi nilai total ketentuan",
+                });
+            } 
+            else {
+                const payload = {
+                    "mak": mak.value,
+                    "penerima": penerima.value,
+                    "uraian": uraian,
+                    "jumlah": normalizeBayar(nilai),
+                    "ppn" : normalizeBayar(ppn),
+                    "pph21": normalizeBayar(pph21),
+                    "pph22": normalizeBayar(pph22),
+                    "pph23": normalizeBayar(pph23),
+                    "pphfinal": normalizeBayar(pphFinal),
+                }
+                dispatch(belanjaApi.postBelanja(payload))
+                .then(() => {
+                    setLoading(false)
+                    setMak("")
+                    setNilai("")
+                    setPenerima("")
+                    setUraian("")
+                    setPpn("")
+                    setPph21("")
+                    setPph22("")
+                    setPph23("")
+                    setPphFinal("")
+                    setValidUraian(null)
+                    MySwal.fire({
+                        icon: "success",
+                        title: "Data Belanja Berhasil Ditambahkan",
+                    })
+                })
+                .catch((err) => {
+                    setLoading(false)
+                    MySwal.fire({
+                        icon: "error",
+                        title: "Gagal Menambahkan Belanja",
+                    });
+                    
+                })
+            }
         }
 
     }
@@ -103,10 +132,36 @@ export default function TambahBelanja() {
             setDataPihakTiga([...result])
         })
     }
+    const getPeriode = async () => {
+        try {
+            const result = await satkerApi.getPeriodeSatker()
+            if(result) {
+                console.log("status true")
+                result.map((item)=> {
+                    if(item["status_priode"] === "true") {
+                        const payload = {
+                            value: item["priode"],
+                            label: item["priode"],
+                        }
+                        setPeriodeDef(payload)
+                    }
+                })
+            }
+            return result
+        }
+        catch (err) {
+            console.log(err)
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal Mengambil Data Periode Satuan Kerja",
+              });
+        }
+    } 
 
     useEffect(() => {
         dispatch(makApi.getMakHeader())
         ambilPihakTiga()
+        getPeriode()
     }, [])
 
     return(

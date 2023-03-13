@@ -150,9 +150,39 @@ const editBelanja = async (data) => {
     }
 }
 
+const getSatketMak = async (data) => {
+    try {
+        const result = await instance({
+            method: 'post',
+            url: '/set_makpriode_satker/',
+            header: authHeader(),
+            data: {
+                "periode":data.periode,
+                "mak": data.mak,
+                token: tokenApi()
+            }
+        })
+        return result.data.data
+    }
+    catch(error) {
+        const message = (
+            error.response && 
+            error.response.data && 
+            error.response.data.message ||
+            error.message ||
+            error.toString())
+        const payload = {
+            message: message,
+            status: false
+        }
+       throw payload
+    }
+}
+
 export default {
     postBelanja,
     getListBelanja,
     deleteBelanja,
     editBelanja,
+    getSatketMak,
 }

@@ -24,54 +24,100 @@ export default function Satker() {
     
     const [limit, setLimit] = useState("10")
     const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingDefault, setIsLoadingDefault] = useState(false)
     const [cari, setCari] = useState("")
     const [reload, setReload] = useState(false)
     const [show, setShow] = useState(false)
     const [data, setData] = useState("")
-    const [periodeDef, setPeriodeDef] = useState("")
+    const [periodeDef, setPeriodeDef] = useState({
+        value: "",
+        label: "",
+    })
     const [dataPeriode, setDataPeriode] = useState([])
 
     const handleShowModalUplad = () => {
         setShow(!show)
     }
-
-    const getDataListSatker = async () =>{
-        try {
-            setIsLoading(true)
-            const payload = {
-                periode: periodeDef.value,
-                cari
-            }
-            const result = await satkerApi.getListSatker(payload)
-            if(result) {
-                setIsLoading(false)
-                return setData(result)
-            }
-            setIsLoading(false)
-        }
-        catch (err) {
-            setIsLoading(false)
-            MySwal.fire({
-                icon: "error",
-                title: "Gagal Mengambil Data Penerima",
-              });
-        }
-    }
     const getPeriode = async () => {
+        
         try {
             const result = await satkerApi.getPeriodeSatker()
             if(result) {
-                return setDataPeriode(result)
+                console.log("status true")
+                result.map((item)=> {
+                    if(item["status_priode"] === "true") {
+                        const payload = {
+                            value: item["priode"],
+                            label: item["priode"],
+                        }
+                        setPeriodeDef(payload)
+                    }
+                })
+                setDataPeriode(result)
             }
+            return result
+        }
+        catch (err) {
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal Mengambil Data Periode Satuan Kerja",
+              });
+        }
+    }
+
+    const getDataListSatker = async () =>{
+        setIsLoading(true)
+        try {
+            const resultPeriode = await getPeriode()
+            if(resultPeriode) {
+                const payload = {
+                    periode: periodeDef.value,
+                    cari
+                }
+                const result = await satkerApi.getListSatker(payload)
+                if(result) {
+                    setIsLoading(false)
+                    return setData(result)
+                }
+                setIsLoading(false)
+            }
+            setIsLoading(false)
         }
         catch (err) {
             setIsLoading(false)
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Mengambil Data Penerima",
+                title: "Gagal Mengambil Data Satuan Kerja",
               });
         }
     }
+   
+
+    const handdleDefaultPeriode = async () => {
+        setIsLoadingDefault(true)
+        try {
+            const result = await satkerApi.postDefaultPeriode(periodeDef.value)
+            if(result) {
+                setIsLoadingDefault(false)
+                setReload(!reload)
+                MySwal.fire({
+                    icon: "success",
+                    title: "berhasil update default periode",
+                })
+                
+            }
+            setReload(!reload)
+            setIsLoadingDefault(false)
+        }
+        catch (err) {
+            setIsLoadingDefault(false)
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal setup Periode Satuan Kerja",
+              });
+        }
+    }
+
     const handleCari = async (event) => {
         event.preventDefault()
         setIsLoading(true)
@@ -94,8 +140,7 @@ export default function Satker() {
 
     useEffect(() => {
         getDataListSatker()
-        getPeriode()
-    },[limit,reload, periodeDef])
+    },[limit,reload])
     return(
         <div className="relative p-4 w-full h-full overflow-y-auto" >
             <ModalUpload show={show} setShow={setShow} handleFunction={handleShowModalUplad} titleForm={"UPLOAD DATA DARI SAKTI"} reload={reload} setReload={setReload} />
@@ -109,7 +154,7 @@ export default function Satker() {
                         <Select2Periode data={dataPeriode} value={periodeDef} setValue={setPeriodeDef} />
                     </div>
                     <div className="flex gap-4">
-                    <div className="">
+                        {/* <div className="">
                             <button 
                                 className="
                                     block 
@@ -126,11 +171,12 @@ export default function Satker() {
                                     py-2.5 
                                     " 
                                     type="button"
-                                    onClick={handleCari}
+                                    onClick={handdleDefaultPeriode}
                             >
                                 Set Default
                             </button>
-                        </div>
+                        </div> */}
+                        <Button handleFunction={handdleDefaultPeriode} isLoading={isLoadingDefault} title="Set Default" mb={false} />
                         <div className="">
                             <button 
                                 className="

@@ -37,6 +37,7 @@ export default function Select2Periode ({data, value, setValue,}) {
             options={options}
             value={value}
             onChange={handleOption}
+            defaultValue={value}
             // isLoading={!options.length}
             placeholder={"periode"}
             className={"w-auto"}

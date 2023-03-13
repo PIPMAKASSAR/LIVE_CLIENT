@@ -1,6 +1,6 @@
 import Loading from "./loadingButton"
 
-export default function Button({handleFunction, title = "Button", width, isLoading, color = "blue", type = "button"}) {
+export default function Button({handleFunction, title = "Button", width, isLoading, color = "blue", type = "button", mb=true}) {
     return(
         <button 
                 type={type} 
@@ -13,7 +13,8 @@ export default function Button({handleFunction, title = "Button", width, isLoadi
                             text-sm 
                             px-5 
                             py-2.5 
-                            mr-2 mb-2  
+                            mr-2 
+                            ${mb ? "mb-2" : ""}  
                             focus:outline-none"
                             ${`bg-${color}-600 hover:bg-${color}-700`}
                             ${width ? `${width}` : `w-fit`}

@@ -15,7 +15,11 @@ export const dataSidebar = [
             {
                 name: "Mak",
                 link: routeName.mak,
-            }
+            },
+            // {
+            //     name: "Pendapatan/tarif",
+            //     link: routeName.pendapatan,
+            // }
         ]
     },
     {

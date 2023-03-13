@@ -18,6 +18,8 @@ const listPenerimaPihakTiga = "/list-pererima-pihak-tiga"
 const tambahListPenerimaPihakTiga = "/tambah-list-pererima-pihak-tiga"
 const belanja = "/belanja"
 const tambahBelanja = "/tambah-belanja"
+const pendapatan = "/pendapatan/tarif"
+const tambahPendapatan = "/tambah-pendapatan/tarif"
 
 
 
@@ -42,4 +44,6 @@ export default {
     tambahListPenerimaPihakTiga,
     belanja,
     tambahBelanja,
+    pendapatan,
+    tambahPendapatan,
 }

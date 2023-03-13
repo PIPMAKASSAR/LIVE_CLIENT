@@ -9,6 +9,7 @@ import withReactContent from "sweetalert2-react-content";
 export default function ModalUpload({title, show, setShow, titleForm, handleFunction, reload, setReload}) {
     const MySwal = withReactContent(Swal)
     const [selectedFile, setSelectedFile] = useState("")
+    const [periode, setPeriode] = useState("")
     const [isLoading, setIsLoading ] = useState (false)
 
     const handleSend = (event) => {
@@ -19,7 +20,11 @@ export default function ModalUpload({title, show, setShow, titleForm, handleFunc
         fileReader.readAsDataURL(selectedFile)
         fileReader.onload = () => {
             const base64String =fileReader.result.split(",")[1]
-            satkerApi.uploadFileSatker(base64String)
+            const payload = {
+                periode,
+                base64String
+            }
+            satkerApi.uploadFileSatker(payload)
             .then((result) => {
                 setIsLoading(false)
                 setSelectedFile(null)
@@ -94,7 +99,7 @@ export default function ModalUpload({title, show, setShow, titleForm, handleFunc
                     <div className="px-6 py-6 lg:px-8">
                         <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">{titleForm}</h3>
                         <form className="space-y-6" onSubmit={handleSend}>
-                            <InputFieldUraian title={"Keterangan Periode Upload"} />
+                            <InputFieldUraian title={"Keterangan Periode Upload"} value={periode} setValue={setPeriode} />
                             <FileInput title={"Upload File"} setValue={setSelectedFile} />
                             <Button type="submit" title="Upload" width={"w-full"} isLoading={isLoading} />
                         </form>

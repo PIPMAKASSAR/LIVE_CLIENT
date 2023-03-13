@@ -23,6 +23,7 @@ import ListPenerimaPihakTiga from './mak/listPenerimaPihakTiga';
 import TambahPenerimaPihakTiga from './mak/tambahPenerimaPihakTiga';
 import Belanja from './keuanganSatker/belanja/belanja';
 import TambahBelanja from './keuanganSatker/belanja/tambahBelanja';
+import Pendapatan from './mak/pendapatan';
 
 import NotFound from './pages/notFound';
 import routeName from './helpers/routeName';
@@ -51,6 +52,7 @@ function App() {
           <Route path={routeName.tambahListPenerimaPihakTiga} element={ <TambahPenerimaPihakTiga /> } />
           <Route path={routeName.belanja} element={ <Belanja /> } />
           <Route path={routeName.tambahBelanja} element={ <TambahBelanja /> } />
+          <Route path={routeName.pendapatan} element={ <Pendapatan /> } />
         </Route>
         <Route path="*" element={ <NotFound /> } />
         <Route path={routeName.login} element={<Login/>} />
