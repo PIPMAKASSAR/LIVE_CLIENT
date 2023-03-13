@@ -10,6 +10,8 @@ import SatkerTable from "../../component/satkerTable";
 import BreadCump from "../../component/breadCump";
 import Button from "../../component/button";
 import SelectInput from "../../component/SelectInput";
+import Select2Periode from "../../component/select2Periode";
+import LoadingSpinner from "../../component/loadingSpinner";
 
 export default function Satker() {
     const dispatch = useDispatch()
@@ -26,6 +28,8 @@ export default function Satker() {
     const [reload, setReload] = useState(false)
     const [show, setShow] = useState(false)
     const [data, setData] = useState("")
+    const [periodeDef, setPeriodeDef] = useState("")
+    const [dataPeriode, setDataPeriode] = useState([])
 
     const handleShowModalUplad = () => {
         setShow(!show)
@@ -34,7 +38,11 @@ export default function Satker() {
     const getDataListSatker = async () =>{
         try {
             setIsLoading(true)
-            const result = await satkerApi.getListSatker(limit)
+            const payload = {
+                periode: periodeDef.value,
+                cari
+            }
+            const result = await satkerApi.getListSatker(payload)
             if(result) {
                 setIsLoading(false)
                 return setData(result)
@@ -49,10 +57,45 @@ export default function Satker() {
               });
         }
     }
+    const getPeriode = async () => {
+        try {
+            const result = await satkerApi.getPeriodeSatker()
+            if(result) {
+                return setDataPeriode(result)
+            }
+        }
+        catch (err) {
+            setIsLoading(false)
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal Mengambil Data Penerima",
+              });
+        }
+    }
+    const handleCari = async (event) => {
+        event.preventDefault()
+        setIsLoading(true)
+        const payload = {
+            periode: periodeDef.value,
+            cari
+        }
+        const result = await satkerApi.getListSatker(payload)
+        if (result) {
+            setIsLoading(false)
+            setData(result)
+        } else {
+            setIsLoading(false)
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal Mengambil Data Satuan Kerja",
+              });
+        }
+    }
 
     useEffect(() => {
         getDataListSatker()
-    },[limit,reload])
+        getPeriode()
+    },[limit,reload, periodeDef])
     return(
         <div className="relative p-4 w-full h-full overflow-y-auto" >
             <ModalUpload show={show} setShow={setShow} handleFunction={handleShowModalUplad} titleForm={"UPLOAD DATA DARI SAKTI"} reload={reload} setReload={setReload} />
@@ -61,36 +104,65 @@ export default function Satker() {
                     <h1 className="text-lg font-extrabold dark:text-white">List Rincian Satuan Kerja</h1>
                     <BreadCump titles={titlesBreadCump} />
                 </div>
-                <div className="flex flex-col h-auto  p-9 mb-4 rounded bg-gray-50 dark:bg-gray-800">
-                    <div className="mb-5">
-                        <button 
-                            className="
-                                block 
-                                text-white 
-                                bg-blue-700 
-                                hover:bg-blue-800 
-                                focus:ring-4 
-                                focus:outline-none 
-                                focus:ring-blue-300 
-                                font-medium 
-                                rounded-lg 
-                                text-sm 
-                                px-5 
-                                py-2.5 
-                                text-center 
-                                dark:bg-blue-600 
-                                dark:hover:bg-blue-700 
-                                dark:focus:ring-blue-800
-                                " 
-                                type="button"
-                                onClick={handleShowModalUplad}
-                        >
-                            Upload Data
-                        </button>
+                <div className="flex flex-row justify-between items-center border-b dark:border-gray-700 p-4 mb-4 rounded bg-gray-50">
+                    <div className="w-1/3">
+                        <Select2Periode data={dataPeriode} value={periodeDef} setValue={setPeriodeDef} />
                     </div>
+                    <div className="flex gap-4">
+                    <div className="">
+                            <button 
+                                className="
+                                    block 
+                                    text-white 
+                                    bg-blue-700 
+                                    hover:bg-blue-800 
+                                    focus:ring-4 
+                                    focus:outline-none 
+                                    focus:ring-blue-300 
+                                    font-medium 
+                                    rounded-lg 
+                                    text-sm 
+                                    px-5 
+                                    py-2.5 
+                                    " 
+                                    type="button"
+                                    onClick={handleCari}
+                            >
+                                Set Default
+                            </button>
+                        </div>
+                        <div className="">
+                            <button 
+                                className="
+                                    block 
+                                    text-white 
+                                    bg-blue-700 
+                                    hover:bg-blue-800 
+                                    focus:ring-4 
+                                    focus:outline-none 
+                                    focus:ring-blue-300 
+                                    font-medium 
+                                    rounded-lg 
+                                    text-sm 
+                                    px-5 
+                                    py-2.5 
+                                    text-center 
+                                    dark:bg-blue-600 
+                                    dark:hover:bg-blue-700 
+                                    dark:focus:ring-blue-800
+                                    " 
+                                    type="button"
+                                    onClick={handleShowModalUplad}
+                            >
+                                Upload Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex flex-col h-auto  p-9 mb-4 rounded bg-gray-50 dark:bg-gray-800">
                     <div className="flex flex-row w-full justify-between items-center mb-4">
                         <SelectInput width={"w-24"} titles={jumlahRow} isValue={limit} setValue={setLimit} />
-                        <form className="" >   
+                        <form className="flex items-start gap-4 w-5/6 justify-end" onSubmit={handleCari} >  
                             <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                             <div className="relative w-96">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -143,7 +215,12 @@ export default function Satker() {
                             </div>
                         </form>
                     </div>
-                    <SatkerTable data={data} itemsPerPage={limit} />
+                    {
+                         isLoading ?
+                         <LoadingSpinner />
+                         :
+                        <SatkerTable data={data} itemsPerPage={limit} />
+                    }
                 </div>   
             </div>
         </div>

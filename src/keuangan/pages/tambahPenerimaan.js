@@ -165,7 +165,7 @@ export default function TambahPenerimaan() {
                             
                             <div className="mb-6 w-full">
                                 <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Akun</label>
-                                <Select2Akun value={kodeAkun} setValue={setKodeAkun} category={"penerimaan"} />
+                                <Select2Akun value={kodeAkun} setValue={setKodeAkun} />
                                 {/* <input 
                                         type="text" 
                                         id="KodeAkun" 

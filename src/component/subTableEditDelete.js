@@ -38,25 +38,24 @@ export default function SubTableEditDelete({data ,handleDelete, handleEdit}) {
                                                     `
                                                     } 
                         >
+
+                            <td className="px-6 py-3"></td>
                             {
-                                Object.keys(row).map((name, index2) => {
-                                    if(name !== "subMak" && name !== "jenis" && name !== "kode_up") {
-                                        if(name === "id" ) {
-                                            return(
-                                                <td className="px-6 py-3" key={index2} ></td>
-                                            )
-                                        } else {
-                                            return(
-                                                <td className="px-6 py-3" key={index2} >{row[name]}</td>
-                                            )                                        
-                                        }
-                                    } 
-                                })
+                                row["jenis"] === "header" ?
+                                <td className="px-6 py-3">{row["mak"]}</td>
+                                :
+                                <td className="px-6 py-3"></td>
                             }
+                            <td className="px-6 py-3">{row["uraian"]}</td>
                             <td>
                                 <div className="flex">
                                     <ButtonEdit title="Edit" color="yellow" handleFunction={() => handleEdit(row)} />
-                                    <ButtonDelete handleFunction={() => handleDelete(row.uuid)} title={"delete"} color={"red"} />
+                                    {
+                                        row["subMak"] && row["subMak"].length !== 0  ?
+                                        null
+                                        :
+                                        <ButtonDelete handleFunction={() => handleDelete(row.uuid)} title={"delete"} color={"red"} />
+                                    }
                                 </div>
                             </td>
                             <td className="px-6 py-3" >

@@ -18,6 +18,7 @@ import makApi from "../../api/makApi";
 import penerimaanPihakTigaApi from "../../api/penerimaanPihakTigaApi";
 import belanjaApi from "../../api/belanjaApi";
 import normalizeBayar from "../../helpers/normalizeBayar";
+import validator from "validator";
 
 export default function TambahBelanja() {
     const MySwal = withReactContent(Swal)
@@ -35,6 +36,7 @@ export default function TambahBelanja() {
     const [pph23, setPph23] = useState("")
     const [pphFinal, setPphFinal] = useState("")
     const [loading, setLoading] = useState(false)
+    const [validUraian, setValidUraian] = useState(null)
     const titlesBreadCump = [ "Master","Belanja"]
 
     const handleKembali = () => {
@@ -44,50 +46,59 @@ export default function TambahBelanja() {
     const handleTambah = async (event) => {
         event.preventDefault()
         setLoading(true)
-        const payload = {
-            "mak": mak.value,
-            "penerima": penerima.value,
-            "uraian": uraian,
-            "jumlah": normalizeBayar(nilai),
-            "ppn" : normalizeBayar(ppn),
-            "pph21": normalizeBayar(pph21),
-            "pph22": normalizeBayar(pph22),
-            "pph23": normalizeBayar(pph23),
-            "pphfinal": normalizeBayar(pphFinal),
-        }
-        console.log(payload)
-        dispatch(belanjaApi.postBelanja(payload))
-        .then(() => {
+        if (!validator.isLength(uraian, { min: 2 })) {
+            setValidUraian("uraian minimal panjang 2 huruf");
             setLoading(false)
-            setMak("")
-            setNilai("")
-            setPenerima("")
-            setUraian("")
-            setPpn("")
-            setPph21("")
-            setPph22("")
-            setPph23("")
-            setPphFinal("")
-            MySwal.fire({
-                icon: "success",
-                title: "Data Belanja Berhasil Ditambahkan",
+        } else if (/select|insert|update|delete|drop table|create table|alter table/i.test(uraian)) {
+            setValidUraian("uraian tidak bisa berupa SQL");
+            setLoading(false)
+        } else if (/[<>{}()[\]%&@!$#^|\\/*?"=]/i.test(uraian)) {
+            setValidUraian("uraian tidak boleh memakai simbol");
+            setLoading(false)
+        } else {
+            const payload = {
+                "mak": mak.value,
+                "penerima": penerima.value,
+                "uraian": uraian,
+                "jumlah": normalizeBayar(nilai),
+                "ppn" : normalizeBayar(ppn),
+                "pph21": normalizeBayar(pph21),
+                "pph22": normalizeBayar(pph22),
+                "pph23": normalizeBayar(pph23),
+                "pphfinal": normalizeBayar(pphFinal),
+            }
+            dispatch(belanjaApi.postBelanja(payload))
+            .then(() => {
+                setLoading(false)
+                setMak("")
+                setNilai("")
+                setPenerima("")
+                setUraian("")
+                setPpn("")
+                setPph21("")
+                setPph22("")
+                setPph23("")
+                setPphFinal("")
+                setValidUraian(null)
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Belanja Berhasil Ditambahkan",
+                })
             })
-        })
-        .catch((err) => {
-            setLoading(false)
-            console.log(err)
-            MySwal.fire({
-                icon: "error",
-                title: "Gagal Menambahkan Mak",
-              });
-            
-        })
-        
+            .catch((err) => {
+                setLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Mak",
+                });
+                
+            })
+        }
 
     }
 
     const ambilPihakTiga = async () => {
-        dispatch(penerimaanPihakTigaApi.getListPihakTiga()) 
+        penerimaanPihakTigaApi.getListPihakTiga()
         .then((result) => {
             setDataPihakTiga([...result])
         })
@@ -114,7 +125,7 @@ export default function TambahBelanja() {
                             <InputSelectHeader title={"Mak"} defaultValue={"Pilih Header"} value={mak} setValue={setMak} data={dataMak} />
                             {/* <InputMakById title={"Mak"} defaultValue={"Pilih Header"} value={mak} setValue={setMak} data={dataMak} /> */}
                             <Select2PihakTiga data={dataPihakTiga} title={"Penerima"} value={penerima} setValue={setPenerima} />
-                            <InputFieldText title={"Uraian"} value={uraian} setValue={setUraian} />
+                            <InputFieldText title={"Uraian"} value={uraian} setValue={setUraian} isError={validUraian} />
                             <div className="grid grid-cols-2 gap-4">
                                 <InputFieldRupiah title={"Nilai"} value={nilai} setValue={setNilai} />
                                 <InputFieldRupiah title={"PPN"} value={ppn} setValue={setPpn}  />

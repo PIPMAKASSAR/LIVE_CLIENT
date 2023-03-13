@@ -13,6 +13,7 @@ import InputFieldRupiah from "./inputFieldRupiah";
 import InputFieldText from "./inputFieldText";
 import normalizeBayar from "../helpers/normalizeBayar";
 import handleChangeRupiah from "../helpers/handleChangRupiah";
+import validator from "validator";
 
 
 export default function ModalEditBelanja ({showModal, setShowModal, data, reload, setReload}) {
@@ -30,40 +31,53 @@ export default function ModalEditBelanja ({showModal, setShowModal, data, reload
     const [pph22, setPph22] = useState("")
     const [pph23, setPph23] = useState("")
     const [pphFinal, setPphFinal] = useState("")
+    const [validUraian, setValidUraian] = useState(null)
     const [loading, setLoading] = useState(false)
 
     const handleEdit = (event) => {
         event.preventDefault()
         setLoading(true)
-        const payload = {
-            "uuid": uuid,
-            "mak": mak,
-            "penerima": penerima,
-            "uraian": uraian,
-            "jumlah": normalizeBayar(nilai),
-            "ppn" : normalizeBayar(ppn),
-            "pph21": normalizeBayar(pph21),
-            "pph22": normalizeBayar(pph22),
-            "pph23": normalizeBayar(pph23),
-            "pphfinal": normalizeBayar(pphFinal),
-        }
-        belanjaApi.editBelanja(payload)
-        .then(() => {
+        if (!validator.isLength(uraian, { min: 2 })) {
+            setValidUraian("uraian minimal panjang 2 huruf");
             setLoading(false)
-            setReload(!reload)
-            MySwal.fire({
-                icon: "success",
-                title: "Data Penerimaan Berhasil Di Edit",
+        } else if (/select|insert|update|delete|drop table|create table|alter table/i.test(uraian)) {
+            setValidUraian("uraian tidak bisa berupa SQL");
+            setLoading(false)
+        } else if (/[<>{}()[\]%&@!$#^|\\/*?"=]/i.test(uraian)) {
+            setValidUraian("uraian tidak boleh memakai simbol");
+            setLoading(false)
+        } else {
+            const payload = {
+                "uuid": uuid,
+                "mak": mak,
+                "penerima": penerima,
+                "uraian": uraian,
+                "jumlah": normalizeBayar(nilai),
+                "ppn" : normalizeBayar(ppn),
+                "pph21": normalizeBayar(pph21),
+                "pph22": normalizeBayar(pph22),
+                "pph23": normalizeBayar(pph23),
+                "pphfinal": normalizeBayar(pphFinal),
+            }
+            belanjaApi.editBelanja(payload)
+            .then(() => {
+                setLoading(false)
+                setReload(!reload)
+                setValidUraian(null)
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Penerimaan Berhasil Di Edit",
+                })
             })
-        })
-        .catch((err) => {
-            setLoading(false)
-            setReload(!reload)
-            MySwal.fire({
-                icon: "error",
-                title: "Gagal Mengedit Data Penerimaan",
-              });
-        })
+            .catch((err) => {
+                setLoading(false)
+                setReload(!reload)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Mengedit Data Penerimaan",
+                });
+            })
+        }
     }
     
     const ambilPihakTiga = async () => {
@@ -187,7 +201,7 @@ export default function ModalEditBelanja ({showModal, setShowModal, data, reload
                             <InputSelectHeaderEdit title={"Mak"} defaultValue={"Pilih Header"} value={mak} setValue={setMak} data={dataMak} />
                             {/* <InputMakById title={"Mak"} defaultValue={"Pilih Header"} value={mak} setValue={setMak} data={dataMak} /> */}
                             <Select2PihakTigaEdit data={dataPihakTiga} title={"Penerima"} value={penerima} setValue={setPenerima} />
-                            <InputFieldText title={"Uraian"} value={uraian} setValue={setUraian} />
+                            <InputFieldText title={"Uraian"} value={uraian} setValue={setUraian} isError={validUraian} />
                             <div className="grid grid-cols-2 gap-4">
                                 <InputFieldRupiah title={"Nilai"} value={nilai} setValue={setNilai} />
                                 <InputFieldRupiah title={"PPN"} value={ppn} setValue={setPpn}  />

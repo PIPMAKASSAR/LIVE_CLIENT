@@ -6,7 +6,7 @@ export default function Select2PihakTiga ({data, value, setValue, title, default
     data.map((data, index) => {
         const payload = {
             value: data["uuid"],
-            label: data["no_rekening"] + " " + data["nama"],
+            label: data["no_rekening"] + " - " + data["nama"],
         }
         options.push(payload)
     }) 

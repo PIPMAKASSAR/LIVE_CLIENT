@@ -3,32 +3,33 @@ import authHeader from "./authHeaders";
 import tokenApi from "./tokenApi";
 
 const uploadFileSatker = async (data) => {
-    console.log(data)
-    // try {
-    //     const result = await instance({
-    //         method: 'post',
-    //         url: '/simpan_tbl_op_satker/',
-    //         headers: authHeader(),
-    //         data: {
-    //             "file_excel":data,
-    //             token: tokenApi()
-    //         }
-    //     })
-    //     return result
-    // }
-    // catch(error) {
-    //     const message = (
-    //         error.response && 
-    //         error.response.data && 
-    //         error.response.data.message ||
-    //         error.message ||
-    //         error.toString())
-    //     const payload = {
-    //         message: message,
-    //         status: false
-    //     }
-    //    throw payload
-    // }
+
+    try {
+        const result = await instance({
+            method: 'post',
+            url: '/simpan_tbl_op_satker/',
+            headers: authHeader(),
+            data: {
+                "periode":data.periode ,
+                "file_excel":data.base64String,
+                token: tokenApi()
+            }
+        })
+        return result
+    }
+    catch(error) {
+        const message = (
+            error.response && 
+            error.response.data && 
+            error.response.data.message ||
+            error.message ||
+            error.toString())
+        const payload = {
+            message: message,
+            status: false
+        }
+       throw payload
+    }
 } 
 
 const getListSatker = async (data) => {
@@ -39,9 +40,37 @@ const getListSatker = async (data) => {
             url: '/list_tbl_op_satker/',
             header: authHeader(),
             data: {
-                "limit" :data.limit,
+                "limit" :"",
                 "offset": "0",
-                "search": "",
+                "search": data.cari,
+                "periode": data.periode,
+                token: tokenApi()
+            }
+        })
+        return result.data.data
+    }
+    catch(error) {
+        const message = (
+            error.response && 
+            error.response.data && 
+            error.response.data.message ||
+            error.message ||
+            error.toString())
+        const payload = {
+            message: message,
+            status: false
+        }
+       throw payload
+    }
+}
+
+const getPeriodeSatker = async () => {
+    try {
+        const result = await instance({
+            method: 'post',
+            url: '/periode_tbl_op_satker/',
+            header: authHeader(),
+            data: {
                 token: tokenApi()
             }
         })
@@ -65,4 +94,5 @@ const getListSatker = async (data) => {
 export default {
     uploadFileSatker,
     getListSatker,
+    getPeriodeSatker,
 }

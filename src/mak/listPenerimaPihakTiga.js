@@ -79,23 +79,38 @@ export default function ListPenerimaPihakTiga() {
         setDataPihakTiga({...data})
     }
 
-    useEffect(()=>{
+    const handleCari = async (event) => {
+        event.preventDefault()
         setIsLoading(true)
-        dispatch(penerimaanPihakTigaApi.getListPihakTiga())
-        .then((result) => {
-            if(result) {
-                setIsLoading(false)
-                setData(result)
-            }
+        const result = await penerimaanPihakTigaApi.getListPihakTiga(cari)
+        if (result) {
             setIsLoading(false)
-        })
-        .catch((error) => {
+            setData(result)
+        } else {
+            setIsLoading(false)
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal Mengambil Data Penerima",
+              });
+        }
+    }
+   
+    const getAllPenerima = async () => {
+        setIsLoading(true)
+        const result = await penerimaanPihakTigaApi.getListPihakTiga()
+        if(result) {
+            setIsLoading(false)
+            setData(result)
+        } else {
             setIsLoading(false)
             MySwal.fire({
                 icon: "error",
                 title: "Gagal Mengambil Data Penerima/Pihak Ketiga",
               });
-        })
+        }
+    }
+    useEffect(()=>{
+        getAllPenerima()
     },[reload])
 
     return(
@@ -120,7 +135,7 @@ export default function ListPenerimaPihakTiga() {
                     </div>
                     <div className="flex flex-row w-full justify-between items-center mb-4">
                         <SelectInput width={"w-24"} titles={jumlahRow} isValue={limit} setValue={setLimit} />
-                        <form className="" >   
+                        <form className=""  onSubmit={handleCari}>   
                             <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                             <div className="relative w-96">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

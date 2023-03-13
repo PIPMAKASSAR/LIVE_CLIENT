@@ -2,7 +2,11 @@ import {MdTrendingDown, MdTrendingUp} from "react-icons/md"
 
 
 function ubahAngka(bilangan) {
-    var	reverse = bilangan.toString().split('').reverse().join(''),
+    let angka = bilangan
+    if(angka === null) {
+       angka = 0 
+    }
+    var	reverse = angka.toString().split('').reverse().join(''),
     ribuan 	= reverse.match(/\d{1,3}/g);
     ribuan	= ribuan.join('.').split('').reverse().join('');
 

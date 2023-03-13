@@ -33,13 +33,16 @@ const postPihakKetiga = (data) => async (dispatch) => {
     }
 }
 
-const getListPihakTiga = () => async (dispatch) => {
+const getListPihakTiga = async (data)  => {
     try {
         const result = await instance({
             url:"/list_tbl_op_penerima/",
             method: "post",
             headers: authHeader(),
             data:{
+                "limit" :"",
+                "offset": "0",
+                "search": data || "",
                 "token": tokenApi()
             }
         })

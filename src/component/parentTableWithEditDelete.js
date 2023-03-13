@@ -66,19 +66,18 @@ export default function ParentTableWithEditDelete({data, isLoading, itemsPerPage
                         data.map((row, index) => (  
                             <React.Fragment key={row.id}>
                                 <tr key={index} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700`} >
-                                    {
-                                        Object.keys(row).map((name, index2) => {   
-                                            if(name !== "subMak" && name !== "jenis" && name !== "kode_up") {
-                                                return(
-                                                    <td className="px-6 py-3" key={index2} >{row[name]}</td>
-                                                )                                        
-                                            }
-                                        })
-                                    }
+                                    <td className="px-6 py-3">{index+1}</td>
+                                    <td className="px-6 py-3">{row["mak"]}</td>
+                                    <td className="px-6 py-3">{row["uraian"]}</td>
                                     <td>
                                         <div className="flex"  >
                                             <ButtonEdit title="Edit" color="yellow" handleFunction={() => handleEdit(row)} />
-                                            <ButtonDelete handleFunction={() => handleDelete(row.uuid)} title={"delete"} color={"red"} />
+                                            {
+                                                row["subMak"] && row["subMak"].length !== 0  ?
+                                                null
+                                                :
+                                                <ButtonDelete handleFunction={() => handleDelete(row.uuid)} title={"delete"} color={"red"} />
+                                            }
                                         </div>
                                     </td>
                                     <td className="px-6 py-3 w-auto">

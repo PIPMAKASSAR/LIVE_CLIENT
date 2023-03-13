@@ -60,7 +60,7 @@ export default function Navbar({handleSideBar, logo, isSideOpen}) {
                                                 focus:outline-none 
                                                 focus:ring-2 
                                                 focus:ring-gray-200
-                                                xl:visible 
+                                                lg:visible 
                                                 "
                                     onClick={handleSideBar}
                             >
@@ -209,7 +209,7 @@ export default function Navbar({handleSideBar, logo, isSideOpen}) {
                     className={`
                                 fixed
                                 invisible
-                                xl:visible 
+                                lg:visible 
                                 top-0 
                                 left-0 
                                 z-40 

@@ -39,7 +39,7 @@ export default function Layout() {
     return(
         <div className="flex w-full h-screen bg-gray-300">
             <Navbar handleSideBar={handleSideBar} isSideOpen={isSideOpen}  logo={logo} />
-            <div className={`ml-0 ${isSideOpen ? `xl:ml-64` : `null` } w-full overflow-y-auto`}>
+            <div className={`ml-0 ${isSideOpen ? `lg:ml-64` : `null` } w-full overflow-y-auto`}>
                 <Outlet />
             </div>
         </div>

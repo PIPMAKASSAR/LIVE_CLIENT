@@ -1,4 +1,4 @@
-export default function InputFieldUraian({title, value, setValue, keterangan}) {
+export default function InputFieldUraian({title, value, setValue, keterangan, isError}) {
     return(
         <div className="mb-6">
             <label htmlFor="default-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{title}</label>
@@ -22,6 +22,7 @@ export default function InputFieldUraian({title, value, setValue, keterangan}) {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
             />
+            <p className={` ${isError ? "text-red-600" : null} mt-2 text-sm`}>{ isError ? isError : keterangan}</p>
         </div>
     )
 }

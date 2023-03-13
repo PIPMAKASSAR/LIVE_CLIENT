@@ -107,7 +107,7 @@ export default function FormEditPengeluaran ({data, reload, setReload}) {
 
                 <div className="mb-6 w-full">
                     <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Akun</label>
-                    <Select2AkunEdit value={kodeAkun} setValue={setKodeAkun} category={"pengeluaran"} />
+                    <Select2AkunEdit value={kodeAkun} setValue={setKodeAkun} />
                 </div>
 
                 <div className="mb-6 w-full">

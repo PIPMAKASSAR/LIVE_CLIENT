@@ -1,6 +1,6 @@
 import handleKeyPress from "../helpers/handleKeyPress"
 
-export default function TextFieldNoRequired({title, value, setValue, keterangan}) {
+export default function TextFieldNoRequired({title, value, setValue, keterangan, isError}) {
     return(
         <div className="mb-6 w-auto">
                 <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{title}</label>
@@ -23,7 +23,12 @@ export default function TextFieldNoRequired({title, value, setValue, keterangan}
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                 />
-                <p className="mt-2 text-sm">{keterangan}</p>
+                {
+                    isError ?
+                    <p className={` ${isError ? "text-red-600" : null} mt-2 text-sm`}>{ isError ? isError : keterangan}</p>
+                    :
+                    <p className={`mt-2 text-sm`}>Jika memilih jenis "detail" mohon untuk mengimput "-"</p>
+                }
             </div>
     )
 }

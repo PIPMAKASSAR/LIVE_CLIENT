@@ -6,6 +6,7 @@ import login from "../api/loginApi";
 import { useNavigate } from "react-router-dom";
 import logo from "../LOGO-PIP.png"
 import routeName from "../helpers/routeName";
+import validator from "validator";
 
 export default function LoginForm() {
     const navigate = useNavigate()
@@ -17,31 +18,45 @@ export default function LoginForm() {
     const [erroMsg, setErrorMsg] = useState('')
 
     const handleLogin = async (event) => {
-
+        setIsLoading(true)
+        setIsError(false)
         event.preventDefault()
-        const payload = {
-            username,
-            password
-        }
-        try {
+       
+        if (!validator.isAlpha(username, "en-US")) {
+            setErrorMsg("Username harus berupa abjad");
             setIsLoading(true)
-            setIsError(false)
-            setErrorMsg('')
-            const result = await login(payload)
-            if(result.token) {
-                setIsLoading(false)
-                navigate(routeName.dashboard)
-            } else if(!result.status) {
+        } else if (/select|insert|update|delete|drop table|create table|alter table/i.test(username)) {
+            setErrorMsg("Username tidak bisa berupa SQL");
+            setIsLoading(true)
+        } else if (/[<>{}()[\]%&@!$#^|\\/*?"=]/i.test(username)) {
+            setErrorMsg("Username tidak boleh memakai simbol");
+            setIsLoading(true)
+        } else if(!validator.isLength(password, { min: 8 })) {
+            setIsLoading(true)
+            setIsError(true)
+            setErrorMsg("Password harus lebih atau minimal 8 karakter")
+        } else {
+            try {
+                 const payload = {
+                        username : validator.blacklist(username, "\b(ALTER|CREATE|DELETE|DROP|EXEC|INSERT|MERGE|SELECT|UPDATE)\b"),
+                        password : validator.blacklist(password, "\b(ALTER|CREATE|DELETE|DROP|EXEC|INSERT|MERGE|SELECT|UPDATE)\b")
+                }
+                setErrorMsg('')
+                const result = await login(payload)
+                if(result.token) {
+                    setIsLoading(false)
+                    navigate(routeName.dashboard)
+                } else if(!result.status) {
+                    setIsLoading(false)
+                    setIsError(true)
+                    setErrorMsg(result.message)
+                }
+            }  
+            catch(err) {
                 setIsLoading(false)
                 setIsError(true)
-                setErrorMsg(result.message)
+                setErrorMsg(err.message)
             }
-            
-        }
-        catch(err) {
-            setIsLoading(false)
-            setIsError(true)
-            setErrorMsg(err.message)
         }
     }
 

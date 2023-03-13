@@ -12,6 +12,8 @@ import InputSelectHeader from "../component/inputSelectHeader"
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import TextFieldNoRequired from "../component/textFieldNoRequred"
+import InputFieldText from "../component/inputFieldText"
+import validator from "validator"
 
 
 export default function TambahMak() {
@@ -20,12 +22,25 @@ export default function TambahMak() {
     const dispatch = useDispatch()
     const headersMak = useSelector(state => state.mak.listHeader)
     const titlesBreadCump = ["Master","Mak"]
-    const [jenis, setJenis] = useState("header")
-    const [header, setHeader] = useState("-")
+    const [jenis, setJenis] = useState({value:"header",label:"header"})
+    const [header, setHeader] = useState({value:"-", label:"silahkan pilih"})
     const [kodeMak, setKodeMak] = useState("")
     const [uraian, setUraian] = useState("")
     const [loading, setLoading] = useState(false)
-    const jenisData = ["header", "detail"]
+    const [validKodeMak, setValidKodeMak] = useState(null)
+    const [validUraian, setValidUraian] = useState(null)
+    const jenisData = [
+        {
+            value:"header",
+            label:"header"
+        }, 
+        {
+            value:"detail",
+            label:"detail"
+        }
+    ]
+ 
+    const [reload, setReload] = useState(false)
 
     const handleKembali = () => {
         navigate(routeName.mak)
@@ -34,38 +49,71 @@ export default function TambahMak() {
     const handleTambahMak = (event) => {
         event.preventDefault()
         setLoading(true)
-        const payload = {
-            jenis: jenis,
-            kodeMak: kodeMak,
-            kodeUp: header.value || "-",
-            uraian: uraian,
-        }
-        dispatch(makApi.postMak(payload))
-        .then(() => {
-            setLoading(false)
-            setHeader("-")
-            setJenis("header")
-            setKodeMak("")
-            setUraian("")
-            MySwal.fire({
-                icon: "success",
-                title: "Berhasil Menambahkan Mak", 
-            })
-        })
-        .catch((err) => {
+        if(jenis === "detail" && header.value === "-") {
             setLoading(false)
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Menambahkan Mak",
-              });
-            
-        })
+                title: "Gagal Menambahkan Mak, mohon mengisi semua inputan",
+            });
+        }
+        else if (/select|insert|update|delete|drop table|create table|alter table/i.test(kodeMak)) {
+            setValidKodeMak("Mak tidak bisa berupa SQL");
+            setLoading(false)
+        } else if (/[<>{}\%&@!$#^|\\*?"=]/i.test(kodeMak)) {
+            setValidKodeMak("Mak tidak boleh memakai simbol <>,{},\,%,&,@,!,$,#,^,|,\,*,?,= ");
+            setLoading(false)
+        } else if (!validator.isLength(uraian, { min: 2 })) {
+            setValidUraian("uraian minimal panjang 2 huruf");
+            setLoading(false)
+        } else if (/select|insert|update|delete|drop table|create table|alter table/i.test(uraian)) {
+            setValidUraian("uraian tidak bisa berupa SQL");
+            setLoading(false)
+        } else if (/[<>{}\%&@!$#^|\\*?"=]/i.test(uraian)) {
+            setValidUraian("uraian tidak boleh memakai simbol <>,{},\,%,&,@,!,$,#,^,|,\,*,?,= ");
+            setLoading(false)
+        } else {
+            let makKode = null
+            if(header.value === "-") {
+                makKode = kodeMak
+            } else if( header.value !== "-") {
+                makKode =  header.value+"."+kodeMak 
+            }
+            const payload = {
+                jenis: jenis.value,
+                kodeMak:makKode,
+                kodeUp: header.value,
+                uraian: uraian,
+            }
+            dispatch(makApi.postMak(payload))
+            .then(() => {
+                setLoading(false)
+                setHeader({value:"-", label:"silahkan pilih"})
+                setJenis({value:"header",label:"header"})
+                setKodeMak("")
+                setUraian("")
+                setValidKodeMak(null)
+                setValidUraian(null)
+                setReload(!reload)
+                MySwal.fire({
+                    icon: "success",
+                    title: "Berhasil Menambahkan Mak", 
+                })
+            })
+            .catch((err) => {
+                setLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Mak",
+                });
+                
+            })
+        }
 
     }
 
     useEffect(() => {
         dispatch(makApi.getMakHeader())
-    },[])
+    },[reload])
     return(
         <div className="p-4 w-full h-full overflow-y-auto" >
             <div className="p-4 rounded-lg mt-14 " >
@@ -79,15 +127,51 @@ export default function TambahMak() {
                     </div>
                     <div className="lg:mx-72">
                         <form onSubmit={handleTambahMak} >
-                            <div className="flex md:justify-between w-full">
-                                <InputSelect title={"Jenis"} data={jenisData} value={jenis} setValue={setJenis} />
-                                <div className="w-80">
-                                    <InputSelectHeader title={"Header"} defaultValue={"Pilih Header"} value={header} setValue={setHeader} category={"header"} data={headersMak} />
+                            <div className="flex md:justify-center gap-5 w-full">
+                                <div className="w-1/2">
+                                    <InputSelect title={"Jenis"} data={jenisData} value={jenis} setValue={setJenis} position={true} />
+                                </div>
+                                <div className="w-1/2">
+                                    <InputSelectHeader title={"Header"} defaultValue={"Pilih Header"} value={header} setValue={setHeader} category={"header"} data={headersMak} position={true} />
                                 </div>
                             </div>
-                            {/* <InputFieldAngka title={"Kode MAK"} value={kodeMak} setValue={setKodeMak} /> */}
-                            <TextFieldNoRequired title={"Kode MAK"} value={kodeMak} setValue={setKodeMak} />
-                            <InputFieldUraian title={"Uraian"} value={uraian} setValue={setUraian} />
+                                {
+                                    jenis.value !== "detail" ?
+                                    header.value !== "-" ?
+                                    <div className="flex items-end gap-2">
+                                        <div className="mb-6 max-w-sm">
+                                            <label htmlFor="KodeMak" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode MAK</label>
+                                            <input 
+                                                    type="text" 
+                                                    id="KodeMak" 
+                                                    className="
+                                                                block 
+                                                                w-full 
+                                                                p-2 
+                                                                text-gray-900 
+                                                                border 
+                                                                border-gray-300 
+                                                                rounded-lg 
+                                                                bg-gray-50
+                                                                sm:text-xs 
+                                                                focus:ring-blue-500 
+                                                                focus:border-blue-500 
+                                                                "
+                                                    value={header.value+"."}
+                                                    disabled
+                                                    required 
+                                            />
+                                            <div className="mt-2" ></div>
+                                        </div>
+                                        <InputFieldText title={""} value={kodeMak} setValue={setKodeMak} isError={validKodeMak} width={"max-w-sm"} />
+                                    </div>
+                                    :
+                                    <InputFieldText title={"Kode MAK"} value={kodeMak} setValue={setKodeMak} isError={validKodeMak} />
+                                    :
+                                    null
+                                }
+                                
+                            <InputFieldUraian title={"Uraian"} value={uraian} setValue={setUraian} isError={validUraian} />
                             <Button type="submit" title="Tambah MAK" width={"w-full"} isLoading={loading} />
                         </form>
                     </div>   

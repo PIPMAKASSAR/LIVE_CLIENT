@@ -50,13 +50,17 @@ export default function TableNormal({category, isLoading, data, itemsPerPage, ti
                         data.map((row, index) => (  
                             <React.Fragment key={row.id}>
                                 <tr key={index} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700`} >
-                                    {
+                                    {/* {
                                         nameAtribut.map((name, index2) => {   
                                             return(
                                                 <td className="px-6 py-3" key={index2} >{row[name]}</td>
                                             )                                                                                  
                                         })
-                                    }
+                                    } */}
+                                    <td className="px-6 py-3" key={index} >{index+1}</td>
+                                    <td className="px-6 py-3" key={index} >{row['nama']}</td>
+                                    <td className="px-6 py-3" key={index} >{row['no_rekening']}</td>
+                                    <td className="px-6 py-3" key={index} >{row['npwp']}</td>
                                     <td>
                                         <div className="px-6 py-3 flex w-full"  >
                                             <ButtonEdit title="Edit" color="yellow" handleFunction={() => handleEdit(row)} />

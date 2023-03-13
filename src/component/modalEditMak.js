@@ -11,6 +11,9 @@ import InputSelect from "./inputSelect";
 import InputSelectHeader from "./inputSelectHeader";
 import makApi from "../api/makApi";
 import InputSelectHeaderEdit from "./inputSelectHeaderEdit";
+import TextFieldNoRequired from "./textFieldNoRequred";
+import InputFieldText from "./inputFieldText";
+import validator from "validator";
 
 
 export default function ModalEditMak ({showModal, setShowModal, data, reload, setReload}) {
@@ -23,45 +26,80 @@ export default function ModalEditMak ({showModal, setShowModal, data, reload, se
     const [uuId, setUuId] = useState("")
     const [jenisMak, setJenisMak] = useState("")
     const [header, setHeader] = useState("")
-    const [kodeMak, setKodeMak] = useState("")
+    const [kodeMak, setKodeMak] = useState("-")
     const [uraianMak, setUraianMak] = useState("")
-    const jenisData = ["header", "detail"]
+    const [validKodeMak, setValidKodeMak] = useState(null)
+    const [validUraian, setValidUraian] = useState(null)
+    const jenisData = [
+        {
+            value:"header",
+            label:"header"
+        }, 
+        {
+            value:"detail",
+            label:"detail"
+        }
+    ]
     const [loading, setLoading] = useState(false)
 
     const handleEdit = (event) => {
         event.preventDefault()
-        // setLoading(true)
-        const payload = {
-            uuId: uuId,
-            jenis: jenisMak,
-            kodeMak: kodeMak,
-            kodeUp: header,
-            uraian: uraianMak,
-        }
-        dispatch(makApi.putMak(payload))
-        .then(() => {
+        setLoading(true)
+        if (/select|insert|update|delete|drop table|create table|alter table/i.test(kodeMak)) {
+            setValidKodeMak("Mak tidak bisa berupa SQL");
             setLoading(false)
-            setReload(!reload)
-            MySwal.fire({
-                icon: "success",
-                title: "Data Penerimaan Berhasil Di Edit",
+        } else if (/[<>{}\%&@!$#^|\\*?"=]/i.test(kodeMak)) {
+            setValidKodeMak("Mak tidak boleh memakai simbol");
+            setLoading(false)
+        } else if (/select|insert|update|delete|drop table|create table|alter table/i.test(uraian)) {
+            setValidUraian("uraian tidak bisa berupa SQL");
+            setLoading(false)
+        } else if (/[<>{}\%&@!$#^|\\*?"=]/i.test(uraian)) {
+            setValidUraian("uraian tidak boleh memakai simbol");
+            setLoading(false)
+        } else {
+            if(jenisMak.value === "detail") {
+                setKodeMak("-")
+            }
+            const payload = {
+                uuId: uuId,
+                jenis: jenisMak.value,
+                kodeMak: kodeMak,
+                kodeUp: header,
+                uraian: uraianMak,
+            }
+            dispatch(makApi.putMak(payload))
+            .then(() => {
+                setLoading(false)
+                setReload(!reload)
+                setValidKodeMak(null)
+                setValidUraian(null)
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Penerimaan Berhasil Di Edit",
+                })
             })
-        })
-        .catch((err) => {
-            setLoading(false)
-            setReload(!reload)
-            MySwal.fire({
-                icon: "error",
-                title: "Gagal Mengedit Data Penerimaan",
-              });
-        })
+            .catch((err) => {
+                setLoading(false)
+                setReload(!reload)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Mengedit Data Penerimaan",
+                });
+            })
+        }
     }
 
     useEffect(() => {
+        const jenisDataMak = {
+            value:jenis,
+            label:jenis 
+        }
+        console.log(jenisDataMak)
         dispatch(makApi.getMakHeader())
         setUuId(uuid)
         setUraianMak(uraian)
-        setJenisMak(jenis)
+        setJenisMak(jenisDataMak)
         setKodeMak(mak)
         setHeader(kode_up)
     },[data])
@@ -160,8 +198,13 @@ export default function ModalEditMak ({showModal, setShowModal, data, reload, se
                                 <InputSelect title={"Jenis"} data={jenisData} value={jenisMak} setValue={setJenisMak} />
                                 {/* <InputSelectHeader title={"Header"} defaultValue={"Pilih Header"} value={header} setValue={setHeader} category={"header"} data={headersMak} /> */}
                                 <InputSelectHeaderEdit title={"Header"} defaultValue={"Pilih Header"} value={header} setValue={setHeader} category={"header"} data={headersMak} />
-                                <InputFieldAngka title={"Kode MAK"} value={kodeMak} setValue={setKodeMak} />
-                                <InputFieldUraian title={"Uraian"} value={uraianMak} setValue={setUraianMak} />
+                                {
+                                    jenisMak.value !== "detail" ?
+                                    <InputFieldText title={"Kode MAK"} value={kodeMak} setValue={setKodeMak} isError={validKodeMak} />
+                                    :
+                                    <TextFieldNoRequired title={"Kode MAK"} value={kodeMak} setValue={setKodeMak} isError={validKodeMak} />
+                                }
+                                <InputFieldUraian title={"Uraian"} value={uraianMak} setValue={setUraianMak} isError={validUraian} />
                                 <Button type="submit" title="Edit" width={"w-full"} isLoading={loading} />
                             </form>
                         </div>

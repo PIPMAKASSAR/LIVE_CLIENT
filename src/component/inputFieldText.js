@@ -1,8 +1,8 @@
 import handleKeyPress from "../helpers/handleKeyPress"
 
-export default function InputFieldText({title, value, setValue, keterangan}) {
+export default function InputFieldText({title, value, setValue, keterangan, isError, width}) {
     return(
-        <div className="mb-6 w-full">
+        <div className={`mb-6 ${width ? width : "w-full"}`}>
                 <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{title}</label>
                 <input 
                         type="text" 
@@ -24,7 +24,7 @@ export default function InputFieldText({title, value, setValue, keterangan}) {
                         onChange={(e) => setValue(e.target.value)}
                         required 
                 />
-                <p className="mt-2 text-sm">{keterangan}</p>
+                <p className={` ${isError ? "text-red-600" : null} mt-2 text-sm`}>{ isError ? isError : keterangan}</p>
             </div>
     )
 }

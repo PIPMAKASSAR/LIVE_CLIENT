@@ -7,6 +7,7 @@ import InputFieldUraian from "../component/inputFieldUraian"
 import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import penerimaanPihakTigaApi from "../api/penerimaanPihakTigaApi"
+import validator from "validator"
 
 
 import Swal from "sweetalert2";
@@ -24,6 +25,7 @@ export default function TambahPenerimaPihakTiga() {
     const [npwp, setNpwp] = useState("")
     const [loading, setLoading] = useState(false)
     const jenisData = ["header", "detail"]
+    const [validNama, setValidNama] = useState("")
 
     const handleKembali = () => {
         navigate(routeName.listPenerimaPihakTiga)
@@ -32,29 +34,46 @@ export default function TambahPenerimaPihakTiga() {
     const handleTambah = (event) => {
         event.preventDefault()
         setLoading(true)
-        const payload = {
-            nama,
-            rekening,
-            npwp
-        }
-        dispatch(penerimaanPihakTigaApi.postPihakKetiga(payload))
-        .then(() => {
+        setValidNama("")
+        if (!validator.isLength(nama, { min: 2 })) {
+            setValidNama("Nama minimal panjang 2 huruf");
             setLoading(false)
-            setNama("")
-            setNpwp("")
-            setRekening("")
-            MySwal.fire({
-                icon: "success",
-                title: "Berhasil Menambahkan Penerima/Pihak Ketiga", 
+        } else if (!validator.isAlpha(nama, "en-US")) {
+            setValidNama("Nama harus berupa abjad");
+            setLoading(false)
+        } else if (/select|insert|update|delete|drop table|create table|alter table/i.test(nama)) {
+            setValidNama("Nama tidak bisa berupa SQL");
+            setLoading(false)
+        } else if (/[<>{}()[\]%&@!$#^|\\/*?"=]/i.test(nama)) {
+            setValidNama("Nama tidak boleh memakai simbol");
+            setLoading(false)
+        } else {
+            const payload = {
+                nama : validator.blacklist(nama, "\b(ALTER|CREATE|DELETE|DROP|EXEC|INSERT|MERGE|SELECT|UPDATE)\b"),
+                rekening,
+                npwp
+            }
+            dispatch(penerimaanPihakTigaApi.postPihakKetiga(payload))
+            .then(() => {
+                setLoading(false)
+                setNama("")
+                setNpwp("")
+                setRekening("")
+                setValidNama(null)
+                MySwal.fire({
+                    icon: "success",
+                    title: "Berhasil Menambahkan Penerima/Pihak Ketiga", 
+                })
             })
-        })
-        .catch((error) => {
-            setLoading(false)
-            MySwal.fire({
-                icon: "error",
-                title: "Gagal Menambahkan Penerima/Pihak Ketiga",
-              });
-        })
+            .catch((error) => {
+                setLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Penerima/Pihak Ketiga",
+                  });
+            })
+        }
+        
 
     }
 
@@ -71,7 +90,7 @@ export default function TambahPenerimaPihakTiga() {
                     </div>
                     <div className="lg:mx-72">
                         <form onSubmit={handleTambah} >
-                            <InputFieldText title={"Nama"} value={nama} setValue={setNama} />
+                            <InputFieldText title={"Nama"} value={nama} setValue={setNama} isError={validNama} />
                             <InputFieldAngka title={"Nomor Rekening"} value={rekening} setValue={setRekening} />
                             <InputFieldAngka title={"NPWP"} value={npwp} setValue={setNpwp} />
                             <Button type="submit" title="Tambah Penerimaan/Pihak Ketiga" width={"w-full"} isLoading={loading} />
