@@ -32,59 +32,7 @@ const colors = ["#00cec9", "#0984e3", "#6c5ce7", "#ffeaa7", "#fab1a0", "#ff7675"
 export default function Dashboard({isSideOpen}) {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    // const [dateRange, setDateRange] = useState([
-    //     {
-    //         startDate: new Date(),
-    //         endDate: new Date(),
-    //       key: 'selection'
-    //     }
-    //   ]);
-    const customRanges = [
-        {
-          label: 'Hari ini',
-          range: () => ({
-            startDate: new Date(),
-            endDate: new Date()
-          }),
-          isSelected() {
-            return true;
-          },
-        //   key: 'today'
-        },
-        {
-          label: 'Kemarin',
-          range: () => ({
-            startDate: subDays(new Date(), 1),
-            endDate: subDays(new Date(), 1),
-          }),
-          isSelected() {
-            return true;
-          },
-        //   key: 'yesterday'
-        },
-        {
-          label: 'Bulan ini',
-          range: () => ({
-            startDate: startOfMonth(new Date()),
-            endDate: endOfMonth(new Date()),
-          }),
-          isSelected() {
-            return true;
-          },
-        //   key: 'thisMonth'
-        },
-        {
-          label: 'Bulan kemarin',
-          range: () => ({
-            startDate: startOfMonth(subMonths(new Date(), 1)),
-            endDate: endOfMonth(subMonths(new Date(), 1)),
-          }),
-          isSelected() {
-            return true;
-          },
-        //   key: 'lastMonth'
-        }
-      ];
+   
     const [dateRange, setDateRange] = useState([startOfMonth(new Date()), endOfMonth(new Date())]);
     const [startDate, endDate] = dateRange;
 
@@ -148,12 +96,6 @@ export default function Dashboard({isSideOpen}) {
     }
   
     useEffect(() => {
-        // dispatch(dashboardApi.getTotalPenerimaan(dateRange))
-        // dispatch(dashboardApi.getTotalPengeluaran(dateRange))
-        // dispatch(dashboardApi.getTotalSaldoOperasional(dateRange))
-        // dispatch(dashboardApi.getTotalSaldoDanaKelolaan(dateRange))
-        // dispatch(dashboardApi.getTotalSaldoKas(dateRange))
-        // dispatch(dashboardApi.getGrafikPenerimaan(dateRange))
         handleGetData()
     },[reload])
 
@@ -166,7 +108,7 @@ export default function Dashboard({isSideOpen}) {
                     <div className="">
                         <label className="md:mr-2 w-full mb-2 text-sm font-medium text-gray-900 dark:text-white">Periode :</label>
                         <div className={`w-48`}>
-                            <DatePicker
+                            {/* <DatePicker
                                 selectsRange={true}
                                 startDate={startDate}
                                 endDate={endDate}
@@ -180,17 +122,6 @@ export default function Dashboard({isSideOpen}) {
                                 rounded-lg 
                                 bg-gray-50"
                                 withPortal
-                            />
-                            {/* <DateRangePicker
-                                // onChange={item => setDateRange(item.selection)}
-                                onChange={handleTanggal}
-                                showSelectionPreview={true}
-                                moveRangeOnFirstSelection={true}
-                                months={2}
-                                direction="horizontal"
-                                ranges={dateRange}
-                                staticRanges={customRanges}
-                                dateDisplayFormat={'dd/MM/yyyy'}
                             /> */}
                         </div>
                     </div> 
