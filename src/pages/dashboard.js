@@ -108,7 +108,7 @@ export default function Dashboard({isSideOpen}) {
                     <div className="">
                         <label className="md:mr-2 w-full mb-2 text-sm font-medium text-gray-900 dark:text-white">Periode :</label>
                         <div className={`w-48`}>
-                            {/* <DatePicker
+                            <DatePicker
                                 selectsRange={true}
                                 startDate={startDate}
                                 endDate={endDate}
@@ -122,7 +122,7 @@ export default function Dashboard({isSideOpen}) {
                                 rounded-lg 
                                 bg-gray-50"
                                 withPortal
-                            /> */}
+                            />
                         </div>
                     </div> 
                 </div>
