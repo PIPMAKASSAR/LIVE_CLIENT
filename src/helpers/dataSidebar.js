@@ -12,10 +12,10 @@ export const dataSidebar = [
                 name: "Penerima/Pihak Ketiga",
                 link: routeName.listPenerimaPihakTiga,
             },
-            {
-                name: "Mak",
-                link: routeName.mak,
-            },
+            // {
+            //     name: "Mak",
+            //     link: routeName.mak,
+            // },
             // {
             //     name: "Pendapatan/tarif",
             //     link: routeName.pendapatan,

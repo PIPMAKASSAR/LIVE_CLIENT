@@ -73,8 +73,8 @@ export default function SatkerTable({data, isLoading, itemsPerPage, tittles, rel
                                     <td className="px-6 py-3">{row["mak"]}</td>
                                     <td className="px-6 py-3">{row["uraian"]}</td>
                                     <td className="px-6 py-3">{row["satuan"]|| ""}</td>
-                                    <td className="px-6 py-3">{rupiah(row["nilai"], 'Rp.') || ""}</td>
-                                    <td className="px-6 py-3">{rupiah(row["total_nilai"], 'Rp.') || ""}</td>
+                                    <td className="px-6 py-3 text-right">{rupiah(row["nilai"], 'Rp.') || ""}</td>
+                                    <td className="px-6 py-3 text-right">{rupiah(row["total_nilai"], 'Rp.') || ""}</td>
                                     <td className="px-6 py-3">
                                         {
                                             row["subMak"] && row["subMak"].length !== 0  ?
