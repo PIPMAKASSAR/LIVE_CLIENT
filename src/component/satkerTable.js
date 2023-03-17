@@ -28,6 +28,7 @@ export default function SatkerTable({data, isLoading, itemsPerPage, tittles, rel
         setCurrentItems(data.slice(itemOffset, endOffset))
         setPageCount(Math.ceil(data.length / itemsPerPage))
     },[itemOffset, itemsPerPage, data])
+   
 
     const handlePageClick = (event) => {
         const newOffset = event.selected * itemsPerPage % data.length
@@ -55,8 +56,8 @@ export default function SatkerTable({data, isLoading, itemsPerPage, tittles, rel
                 </thead>
                 <tbody>
                     {
-                        data &&
-                        data.map((row, index) => (  
+                        currentItems &&
+                        currentItems.map((row, index) => (  
                             <React.Fragment key={row.id}>
                                 <tr key={index} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700`} >
                                     {/* {
