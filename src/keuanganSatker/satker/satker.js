@@ -140,7 +140,7 @@ export default function Satker() {
 
     useEffect(() => {
         getDataListSatker()
-    },[limit,reload])
+    },[reload])
     return(
         <div className="relative p-4 w-full h-full overflow-y-auto" >
             <ModalUpload show={show} setShow={setShow} handleFunction={handleShowModalUplad} titleForm={"UPLOAD DATA DARI SAKTI"} reload={reload} setReload={setReload} />
