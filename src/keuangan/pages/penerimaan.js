@@ -11,18 +11,26 @@ import ErrorMsg from "../../component/errorMsg";
 import SuccessMsg from "../../component/successMsg";
 import TableWithPagination from "../../component/tableWithPagination";
 import routeName from "../../helpers/routeName";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 export default function Penerimaan() {
+    const MySwal = withReactContent(Swal)
     const titlesBreadCump = ["Keuangan", "Penerimaan"]
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const dataListPenerimaan = useSelector(state => state.penerimaan.data)
+    const [data, setData] = useState([])
     const errorMessage = useSelector(state => state.errorHandling.getError)
     const statusDelete = useSelector(state => state.penerimaan.hapus)
-    const [limit, setLimit] = useState("10")
+
     const [isLoading, setIsLoading] = useState(false)
     const [cari, setCari] = useState("")
     const [reload, setReload] = useState(false)
+
+    const [limit, setLimit] = useState("10")
+    const [offSet, setOffset] = useState("0")
+    const [totalPages, setTotalPages] = useState("")
+    const [totalRow, setTotalRow] = useState("")
 
     const jumlahRow = [
         "10", "25", "50", "100"
@@ -32,56 +40,63 @@ export default function Penerimaan() {
         navigate(routeName.tambahPenerima)
     }
 
-    const handleCari = (event) => {
-        event.preventDefault()
-        setIsLoading(true)
-        const payload = {
-            limit:limit,
-            cari: cari
+    const handleCari = async (event) => {
+        try {
+            event.preventDefault()
+            setIsLoading(true)
+            const payload = {
+                limit:limit,
+                cari: cari,
+                offSet: offSet,
+            }
+            const result = await penerimaanApi.getListPenerima(payload)
+            if(result.status) {
+                setIsLoading(false)
+                // setReload(!reload)
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            }
         }
-        if(cari) {
-            dispatch(penerimaanApi.getCariData(payload))
-            .then(() => {
+        catch(err) {
+            setIsLoading(false)
+            setData([])
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal mengambil data penerimaan",
+            });
+        }
+    }
+
+    const handleGetListDataPenerimaan = async () => {
+        try {
+            setIsLoading(true)
+            const payload = {
+                limit:limit,
+                cari: cari,
+                offset: offSet,
+            }
+            const result = await penerimaanApi.getListPenerima(payload)
+            if(result.status) {
                 setIsLoading(false)
-            })
-        } else {
-            dispatch(penerimaanApi.getListPenerima(payload))
-            .then(() => {
-                clearErrorMessage()
-                setIsLoading(false)
-            })
-            .catch((err) => {
-                const payload = {
-                    message: "koneksi terputus, silahkan login ulang",
-                    status: false,
-                }
-                dispatch(failMessage(payload))
-                setIsLoading(false)
-            })
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            }
+        }
+        catch(err) {
+            setIsLoading(false)
+            setData([])
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal mengambil data penerimaan",
+            });
         }
     }
 
     useEffect(() => {
-        setIsLoading(true)
-        dispatch(clearPenerimaanStatus())
-        dispatch(clearErrorMessage())
-        const payload = {
-            limit: limit
-        }
-        dispatch(penerimaanApi.getListPenerima(payload))
-        .then(() => {
-            clearErrorMessage()
-            setIsLoading(false)
-        })
-        .catch((err) => {
-            const payload = {
-                message: "koneksi terputus, silahkan login ulang",
-                status: false,
-            }
-            dispatch(failMessage(payload))
-            setIsLoading(false)
-        })
-    },[limit, reload])
+       handleGetListDataPenerimaan()
+    },[limit, reload, offSet])
 
     return(
         <div className="p-4 w-full h-full overflow-y-auto">
@@ -151,29 +166,21 @@ export default function Penerimaan() {
                             </div>
                         </form>
                     </div>
-                    {/* Table Penerimaan */}
                     {
-                        !errorMessage.status ?
-                        <ErrorMsg message={errorMessage.message} />
-                        :
-                        null
+                        data && 
+                        <TableWithPagination 
+                            data={data}  
+                            category={"penerimaan"}  
+                            isLoading={isLoading}  
+                            itemsPerPage={limit}
+                            reload={reload}
+                            setReload={setReload}
+                            offSet={offSet}
+                            setOffset={setOffset}
+                            pageCount={totalPages} 
+                            totalRow={totalRow}
+                            />
                     }
-                    {
-                        statusDelete ?
-                        <SuccessMsg message={statusDelete.message} />
-                        :null
-                    }
-                    {/* <Table titles={titles}  data={dataListPenerimaan} isLoading={isLoading} setIsLoading={setIsDelete} category={"penerimaan"} />  */}
-                    <TableWithPagination 
-                
-                        data={dataListPenerimaan}  
-                        category={"penerimaan"}  
-                        isLoading={isLoading}  
-                        itemsPerPage={limit}
-                        reload={reload}
-                        setReload={setReload}
-
-                        />
                 </div>              
             </div>
         </div>

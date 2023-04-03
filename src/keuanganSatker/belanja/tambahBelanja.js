@@ -20,6 +20,8 @@ import satkerApi from "../../api/satkerApi";
 import belanjaApi from "../../api/belanjaApi";
 import normalizeBayar from "../../helpers/normalizeBayar";
 import validator from "validator";
+import dateFormat from "dateformat";
+import autoGenerateKodetransaksi from "../../helpers/autoGenerateKodetransaks";
 
 export default function TambahBelanja() {
     const MySwal = withReactContent(Swal)
@@ -27,15 +29,17 @@ export default function TambahBelanja() {
     const dispatch = useDispatch()
     const dataMak = useSelector(state => state.mak.listHeader)
     const [dataPihakTiga, setDataPihakTiga] = useState([])
+    const [tanggal, setTanggal] = useState("")
+    const [kodeTransaksi, setKodeTransaksi] = useState("")
     const [mak, setMak] = useState("")
     const [penerima, setPenerima] = useState("")
     const [uraian, setUraian] = useState("")
     const [nilai, setNilai] = useState("")
-    const [ppn,setPpn]  = useState("")
-    const [pph21, setPph21] = useState("")
-    const [pph22, setPph22] = useState("")
-    const [pph23, setPph23] = useState("")
-    const [pphFinal, setPphFinal] = useState("")
+    const [ppn,setPpn]  = useState(0)
+    const [pph21, setPph21] = useState(0)
+    const [pph22, setPph22] = useState(0)
+    const [pph23, setPph23] = useState(0)
+    const [pphFinal, setPphFinal] = useState(0)
     const [loading, setLoading] = useState(false)
     const [validUraian, setValidUraian] = useState(null)
     const [periodeDef, setPeriodeDef] = useState({
@@ -85,19 +89,23 @@ export default function TambahBelanja() {
             } 
             else {
                 const payload = {
+                    "tanggal": dateFormat(tanggal, "isoDate"),
+                    "kodeTransaksi": kodeTransaksi,
                     "mak": mak.value,
                     "penerima": penerima.value,
                     "uraian": uraian,
                     "jumlah": normalizeBayar(nilai),
-                    "ppn" : normalizeBayar(ppn),
-                    "pph21": normalizeBayar(pph21),
-                    "pph22": normalizeBayar(pph22),
-                    "pph23": normalizeBayar(pph23),
-                    "pphfinal": normalizeBayar(pphFinal),
+                    "ppn" : ppn !== 0 ? normalizeBayar(ppn) : 0,
+                    "pph21": pph21 !== 0 ? normalizeBayar(pph21) : 0,
+                    "pph22": pph22 !== 0 ?normalizeBayar(pph22) : 0,
+                    "pph23": pph23 !== 0 ?normalizeBayar(pph23) : 0,
+                    "pphfinal": pphFinal !== 0 ? normalizeBayar(pphFinal) : 0,
                 }
                 dispatch(belanjaApi.postBelanja(payload))
                 .then(() => {
                     setLoading(false)
+                    setTanggal("")
+                    setKodeTransaksi("")
                     setMak("")
                     setNilai("")
                     setPenerima("")
@@ -156,7 +164,33 @@ export default function TambahBelanja() {
                 title: "Gagal Mengambil Data Periode Satuan Kerja",
               });
         }
-    } 
+    }
+    
+    const handleKodeTransaksi = async (data) => {
+        try {
+            let kodeCreate = null
+            const type = "belanja"
+            const result = await belanjaApi.getLastKodeTransaksi()
+            if(result.length > 0) {
+                const splitKode = result[0]["kode_transaksi"].split('/')
+                const num = splitKode[3]
+                kodeCreate = autoGenerateKodetransaksi(num, data, type)
+                setKodeTransaksi(kodeCreate)
+            } else {
+                kodeCreate = autoGenerateKodetransaksi("0000", data, type)
+                setKodeTransaksi(kodeCreate)
+
+            }
+            setTanggal(data)
+        }
+        catch(error) {
+            console.log(error)
+            MySwal.fire({
+                icon: "error",
+                title: error.message,
+            });
+        }
+    }
 
     useEffect(() => {
         dispatch(makApi.getMakHeader())
@@ -177,6 +211,59 @@ export default function TambahBelanja() {
                     </div>
                     <div className="lg:mx-72">
                         <form onSubmit={handleTambah} >
+                            <div className="flex gap-5">
+                                <div className="mb-6">
+                                    <label htmlFor="small-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Transaksi</label>
+                                    <div className="relative max-w-sm">
+                                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"></path></svg>
+                                        </div>
+                                        <input 
+                                                type="date" 
+                                                className="
+                                                            bg-gray-50 
+                                                            border 
+                                                            border-gray-300 
+                                                            text-gray-900 
+                                                            text-sm 
+                                                            rounded-lg 
+                                                            focus:ring-blue-500 
+                                                            focus:border-blue-500 
+                                                            block 
+                                                            mx:w-48  
+                                                            pl-10 
+                                                            p-2.5 
+                                                            " 
+                                                placeholder="Select date"
+                                                value={tanggal}
+                                                onChange={(e) => {handleKodeTransaksi(e.target.value)}} 
+                                                required
+                                        />
+                                    </div>
+                                </div> 
+                                <div className="mb-6 mx-w-xl">
+                                    <label htmlFor="kodeTransaksi" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Transaksi:</label>
+                                    <input 
+                                            type="text" 
+                                            id="kodeTransaksi" 
+                                            className="
+                                                        block 
+                                                        w-full 
+                                                        p-3 
+                                                        text-gray-900 border 
+                                                        border-gray-300 
+                                                        rounded-lg 
+                                                        bg-gray-50 
+                                                        sm:text-xs 
+                                                        focus:ring-blue-500 
+                                                        focus:border-blue-500 
+                                                    "
+                                            value={kodeTransaksi}
+                                            disabled
+                                            required
+                                    />
+                                </div>
+                            </div>
                             <InputSelectHeader title={"Mak"} defaultValue={"Pilih Header"} value={mak} setValue={setMak} data={dataMak} />
                             {/* <InputMakById title={"Mak"} defaultValue={"Pilih Header"} value={mak} setValue={setMak} data={dataMak} /> */}
                             <Select2PihakTiga data={dataPihakTiga} title={"Penerima"} value={penerima} setValue={setPenerima} />

@@ -43,7 +43,7 @@ const postPengeluaran = (data) => async (dispatch) => {
     }
 }
 
-const getListPengeluaran = (data) => async (dispatch) => {
+const getListPengeluaran = async (data) => {
     try {
         const result = await instance({
             method: "post",
@@ -51,13 +51,13 @@ const getListPengeluaran = (data) => async (dispatch) => {
             headers: authHeader(),
             data: {
                 "limit" :data.limit,
-                "offset": "0",
+                "offset": data.offset,
                 "jns_transaksi": "Pengeluaran",
-                "search": "",
+                "search": data.cari,
                 "token": tokenApi()
             }
         })
-        dispatch(listPengeluaran(result.data.data))
+        return result.data
      
     }
     catch(error) {
@@ -71,7 +71,7 @@ const getListPengeluaran = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 }
 const getCariData = (data) => async (dispatch) => {

@@ -6,37 +6,34 @@ import TableSaldoPengelolaanKas from "./tableSaldoPengelolaanKas";
 import TableSaldoDanaKelolaan from "./tableSaldoDanaKelolaan";
 import TablePenerimaan from "./tablePenerimaan";
 import TablePengeluaran from "./tablePengeluaran";
+import LoadingSpinner from "./loadingSpinner";
 // import "./tableWithpagination.css"
 
-export default function TableWithPagination({category, isLoading, data, itemsPerPage, tittles, reload, setReload}) {
-    const [currentItems, setCurrentItems] = useState(null)
+export default function TableWithPagination({category, isLoading, data, itemsPerPage, tittles, reload, setReload, offSet, totalRow, setOffset }) {
     const [pageCount, setPageCount] = useState(0)
-    const [itemOffset, setItemOffset] = useState(0)
 
     useEffect(() => {
-        const endOffset = itemOffset + itemsPerPage
-        // console.log(`loading items from ${itemOffset} to ${endOffset}`)
-        setCurrentItems(data.slice(itemOffset, endOffset))
-        setPageCount(Math.ceil(data.length / itemsPerPage))
-    },[itemOffset, itemsPerPage, data])
-   
+        // const endOffset = offSet + itemsPerPage
+        // console.log(`loading items from ${offSet} to ${endOffset}`)
+        setPageCount(Math.ceil(totalRow / itemsPerPage))
+    },[offSet, itemsPerPage, data])
 
-    const handlePageClick = (event) => {
-        const newOffset = event.selected * itemsPerPage % data.length
-        // console.log(
-        //     `user request page number ${event.selected}, which is offset ${newOffset}`
-        // )
-        setItemOffset(newOffset)
+    const handlePageClick = async (event) => {
+        const newOffset = event.selected * itemsPerPage % totalRow
+        setOffset(String(newOffset))
     }
 
     return (
         <>  
-            {
+            {   
+                isLoading ?
+                <LoadingSpinner />
+                :
                 category ==="penerimaan" ?
                 <TablePenerimaan 
                     category={category} 
                     isLoading={isLoading} 
-                    data={currentItems} 
+                    data={data} 
                     tittles={tittles} 
                     reload={reload} 
                     setReload={setReload}  
@@ -45,7 +42,7 @@ export default function TableWithPagination({category, isLoading, data, itemsPer
                 <TablePengeluaran  
                     category={category} 
                     isLoading={isLoading} 
-                    data={currentItems} 
+                    data={data} 
                     tittles={tittles} 
                     reload={reload} 
                     setReload={setReload}
@@ -54,7 +51,7 @@ export default function TableWithPagination({category, isLoading, data, itemsPer
                 <TableSaldoOperasional 
                     category={category} 
                     isLoading={isLoading} 
-                    data={currentItems} 
+                    data={data} 
                     tittles={tittles} 
                     reload={reload} 
                     setReload={setReload} 
@@ -63,7 +60,7 @@ export default function TableWithPagination({category, isLoading, data, itemsPer
                 <TableSaldoDanaKelolaan
                     category={category} 
                     isLoading={isLoading} 
-                    data={currentItems} 
+                    data={data} 
                     tittles={tittles} 
                     reload={reload} 
                     setReload={setReload} 
@@ -72,7 +69,7 @@ export default function TableWithPagination({category, isLoading, data, itemsPer
                 <TableSaldoPengelolaanKas
                     category={category} 
                     isLoading={isLoading} 
-                    data={currentItems} 
+                    data={data} 
                     tittles={tittles} 
                     reload={reload} 
                     setReload={setReload} 

@@ -14,13 +14,24 @@ function ubahAngka(bilangan) {
 
 
 export default function AngkaDashboardRow2({nilai}) {
-    const nilaiUbah = ubahAngka(nilai)
-    return(
-        <div className="flex flex-col justify-center items-center">
-            <h1 className={`font-extrabold text-xl sm:text-3xl md:text-4xl xl:text-3xl`}>
-                {nilai ? `Rp. ${nilaiUbah}` : "Rp. 0"}
-                
-            </h1>
-        </div>
-    )
+    if(nilai !== null) {
+        const nilaiUbah = ubahAngka(nilai)
+        return(
+            <div className="flex flex-col justify-center items-center">
+                <h1 className={`font-extrabold text-xl sm:text-3xl md:text-4xl xl:text-3xl`}>
+                    {`Rp. ${nilaiUbah}`}
+                    
+                </h1>
+            </div>
+        )
+    }
+    else {
+        return(
+            <div className="flex flex-col justify-center items-center">
+                <h1 className={`font-extrabold text-xl sm:text-3xl md:text-4xl xl:text-3xl`}>
+                    "Rp. 0"   
+                </h1>
+            </div>
+        )
+    }
 } 

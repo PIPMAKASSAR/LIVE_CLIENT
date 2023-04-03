@@ -3,7 +3,7 @@ import './App.css';
 import Login from "./pages/login"
 import Layout from './pages/layout';
 import Dashboard from './pages/dashboard';
-import { createBrowserRouter ,Route,RouterProvider, Routes } from 'react-router-dom';
+import { createBrowserRouter ,Route,RouterProvider, Routes,} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import Penerimaan from './keuangan/pages/penerimaan';
@@ -24,12 +24,22 @@ import TambahPenerimaPihakTiga from './mak/tambahPenerimaPihakTiga';
 import Belanja from './keuanganSatker/belanja/belanja';
 import TambahBelanja from './keuanganSatker/belanja/tambahBelanja';
 import Pendapatan from './mak/pendapatan';
+import TambahPendapatan from './mak/tambahPendapatan';
+import DetailPendapatan from './mak/detailPendapatan';
+import TambahDetailPendapatan from './mak/tambahDetailPendapatan';
+import KeuanganPendapatan from './keuanganSatker/pendapatan/keuanganPendapatan';
+import TambahKeuanganPendapatan from './keuanganSatker/pendapatan/tambahKeuanganPendapatan';
+import BkuUmum from './laporan/BKU Umum/bkuUmum';
 
 import NotFound from './pages/notFound';
 import routeName from './helpers/routeName';
+import LaporanBelanja from './laporan/belanja/laporanBelanja';
+import LaporanPendapatan from './laporan/pendapatan/laporanPendapatan';
+
 
 
 function App() {
+
   return (
     <BrowserRouter>
       <Routes>
@@ -53,6 +63,14 @@ function App() {
           <Route path={routeName.belanja} element={ <Belanja /> } />
           <Route path={routeName.tambahBelanja} element={ <TambahBelanja /> } />
           <Route path={routeName.pendapatan} element={ <Pendapatan /> } />
+          <Route path={routeName.tambahPendapatan} element={ <TambahPendapatan /> } />
+          <Route path={"/detail-pendapatan/tarif/:uuid"} element={ <DetailPendapatan /> } />
+          <Route path={"/detail-pendapatan/tarif/tambah/:uuid/:akunPendapatan"} element={ <TambahDetailPendapatan /> } />
+          <Route path={routeName.keuanganPendapatan} element={ <KeuanganPendapatan /> } />
+          <Route path={routeName.tambahKeuanganPendapatan} element={ <TambahKeuanganPendapatan /> } />
+          <Route path={routeName.laporanBku} element={ <BkuUmum /> } />
+          <Route path={routeName.laporanBelanja} element={ <LaporanBelanja /> } />
+          <Route path={routeName.laporanPendapatan} element = { <LaporanPendapatan /> } />
         </Route>
         <Route path="*" element={ <NotFound /> } />
         <Route path={routeName.login} element={<Login/>} />

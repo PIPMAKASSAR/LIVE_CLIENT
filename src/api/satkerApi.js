@@ -39,14 +39,14 @@ const getListSatker = async (data) => {
             url: '/list_tbl_op_satker/',
             header: authHeader(),
             data: {
-                "limit" :"",
-                "offset": "0",
+                "limit" : data.limit,
+                "offset": data.offset,
                 "search": data.cari,
                 "periode": data.periode,
                 token: tokenApi()
             }
         })
-        return result.data.data
+        return result.data
     }
     catch(error) {
         const message = (

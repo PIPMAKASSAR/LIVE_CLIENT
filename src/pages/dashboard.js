@@ -8,7 +8,7 @@ import {BiMoney} from "react-icons/bi"
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { data } from "../helpers/data"
 import { useDispatch, useSelector } from "react-redux"
-import dateFormat from "dateformat";
+// import dateFormat from "dateformat";
 import dashboardApi from "../api/dashboardApi"
 import AngkaDashboard from "../helpers/angkaDashboard"
 import "./dashboard.css"
@@ -23,7 +23,7 @@ import 'react-date-range/dist/theme/default.css';
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 import { subDays ,addDays, startOfMonth, endOfMonth, subMonths } from 'date-fns';
-import Button from "../component/button"
+// import Button from "../component/button"
 import LoadingSpinner from "../component/loadingSpinner"
 
 
@@ -32,8 +32,7 @@ const colors = ["#00cec9", "#0984e3", "#6c5ce7", "#ffeaa7", "#fab1a0", "#ff7675"
 export default function Dashboard({isSideOpen}) {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-   
-    const [dateRange, setDateRange] = useState([startOfMonth(new Date()), endOfMonth(new Date())]);
+    const [dateRange, setDateRange] = useState(["", ""]);
     const [startDate, endDate] = dateRange;
 
     const [reload, setReload] = useState(true)
@@ -71,24 +70,24 @@ export default function Dashboard({isSideOpen}) {
         dispatch(dashboardApi.getTotalPenerimaan(dateRange))
         .then(() => {
             setLoadingPenerima(false)
-        })
-        dispatch(dashboardApi.getTotalPengeluaran(dateRange))
-        .then(() => {
-            setLoadingPengeluaran(false)
-        })
-        dispatch(dashboardApi.getTotalSaldoOperasional(dateRange))
-        .then(() => {
-            setLoadingSaldoOperasional(false)
-        })
-        dispatch(dashboardApi.getTotalSaldoDanaKelolaan(dateRange))
-        .then(() => {
-            setLoadingSaldoDanaKelolaan(false)
-        })
-        dispatch(dashboardApi.getTotalSaldoKas(dateRange))
-        .then(() => {
-            setLoadingSaldoKas(false)
-        })
-        dispatch(dashboardApi.getGrafikPenerimaan(dateRange))
+            dispatch(dashboardApi.getTotalPengeluaran(dateRange))
+            .then(() => {
+                setLoadingPengeluaran(false)
+                dispatch(dashboardApi.getTotalSaldoOperasional(dateRange))
+                .then(() => {
+                    setLoadingSaldoOperasional(false)
+                    dispatch(dashboardApi.getTotalSaldoDanaKelolaan(dateRange))
+                    .then(() => {
+                        setLoadingSaldoDanaKelolaan(false)
+                        dispatch(dashboardApi.getTotalSaldoKas(dateRange))
+                        .then(() => {
+                            setLoadingSaldoKas(false)
+                            dispatch(dashboardApi.getGrafikPenerimaan(dateRange))
+                        })
+                    })
+                })
+            })
+        })   
     }
 
     const handlePeriode = () => {

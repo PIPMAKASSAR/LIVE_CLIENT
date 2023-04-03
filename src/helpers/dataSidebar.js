@@ -16,10 +16,10 @@ export const dataSidebar = [
             //     name: "Mak",
             //     link: routeName.mak,
             // },
-            // {
-            //     name: "Pendapatan/tarif",
-            //     link: routeName.pendapatan,
-            // }
+            {
+                name: "Pendapatan/tarif",
+                link: routeName.pendapatan,
+            }
         ]
     },
     {
@@ -32,6 +32,10 @@ export const dataSidebar = [
             {
                 name: "Belanja",
                 link: routeName.belanja
+            },
+            {
+                name: "Pendapatan",
+                link: routeName.keuanganPendapatan
             }
         ]
     },
@@ -62,4 +66,21 @@ export const dataSidebar = [
         ] 
         
     },
+    {
+        name: "Laporan",
+        subMenu: [
+            {
+                name:"Laporan BKU Umum",
+                link: routeName.laporanBku,
+            },
+            {
+                name:"Laporan Belanja",
+                link: routeName.laporanBelanja,
+            },
+            {
+                name:"Laporan Pendapatan",
+                link: routeName.laporanPendapatan,
+            }
+        ]
+    }
 ]

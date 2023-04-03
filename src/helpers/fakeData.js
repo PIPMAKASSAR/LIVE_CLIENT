@@ -814,11 +814,43 @@ const fakeBank = [
    }
 ]
 
+const fakePendapatan = [
+    {
+        uuid: "1",
+        belanja: "424112",
+        uraian: "PENDAPATAN JASA PENDIDIKAN",
+    },
+] 
+const fakePendapatanDetail = [
+    {
+        uuid: "1",
+        belanja: "424112",
+        uraian: "PENDAPATAN JASA PENDIDIKAN",
+        subMak: [
+            {
+                uuid: "1",
+                belanja:"424112.1",
+                uraian: "Layanan seleksi Penerimaan Diklat Peningkatan",
+                subMak: [
+                    {
+                        uuid: "1",
+                        belanja:"424112.1.1",
+                        uraian: "pendaftaran penerimaan diklat peningkatan",
+                    }
+                ]
+            }
+        ],
+    },
+]  
+
+
 export default {
    fakeData,
    fakeDataPihakKetiga,
    fakeDataBelanja,
    fakeAkun,
    fakeBank,
-   fakeRekening
+   fakeRekening,
+   fakePendapatan,
+   fakePendapatanDetail,
 }

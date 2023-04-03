@@ -6,11 +6,11 @@ import {AiOutlineMinusCircle} from "react-icons/ai"
 import ReactPaginate from "react-paginate";
 import SubTableSatker from "./subTableSatker";
 import rupiah from "../helpers/rupiah";
+import LoadingSpinner from "./loadingSpinner";
 
-export default function SatkerTable({data, isLoading, itemsPerPage, tittles, reload, setReload}) {
+export default function SatkerTable({data, isLoading, itemsPerPage, setOffset, offSet, totalRow}) {
     const [selectedRow, setSelectedRow] = useState(null);
     const [currentItems, setCurrentItems] = useState(null)
-    const [detailData, setDetailData] = useState([])
     const [pageCount, setPageCount] = useState(0)
     const [itemOffset, setItemOffset] = useState(0)
     const title = ["no", "kode akun", "uraian", "satuan", "nilai", "total"]
@@ -22,42 +22,64 @@ export default function SatkerTable({data, isLoading, itemsPerPage, tittles, rel
           }
     };
 
-    useEffect(() => {
-        const endOffset = itemOffset + itemsPerPage
-        // console.log(`loading items from ${itemOffset} to ${endOffset}`)
-        setCurrentItems(data.slice(itemOffset, endOffset))
-        setPageCount(Math.ceil(data.length / itemsPerPage))
-    },[itemOffset, itemsPerPage, data])
-   
+    // useEffect(() => {
+    //     const endOffset = itemOffset + itemsPerPage
+    //     // console.log(`loading items from ${itemOffset} to ${endOffset}`)
+    //     setCurrentItems(data.slice(itemOffset, endOffset))
+    //     setPageCount(Math.ceil(data.length / itemsPerPage))
+    // },[itemOffset, itemsPerPage, data])
 
-    const handlePageClick = (event) => {
-        const newOffset = event.selected * itemsPerPage % data.length
-        // console.log(
-        //     `user request page number ${event.selected}, which is offset ${newOffset}`
-        // )
-        setItemOffset(newOffset)
+    useEffect(() => {
+        const endOffset = offSet + itemsPerPage
+        // console.log(`loading items from ${offSet} to ${endOffset}`)
+        setCurrentItems(data.slice(offSet, endOffset))
+        setPageCount(Math.ceil(totalRow / itemsPerPage))
+    },[offSet, itemsPerPage, data])
+
+    // const handlePageClick = (event) => {
+    //     const newOffset = event.selected * itemsPerPage % data.length
+    //     // console.log(
+    //     //     `user request page number ${event.selected}, which is offset ${newOffset}`
+    //     // )
+    //     setItemOffset(newOffset)
+    // }
+
+    const handlePageClick = async (event) => {
+        const newOffset = event.selected * itemsPerPage % totalRow
+        setOffset(String(newOffset))
     }
 
     return(
         <div>
+        {
+            isLoading ?
+            <LoadingSpinner /> 
+            :
+            data &&
             <table className={`invicible ${data && "visible"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" >
                     <tr>
                         {
                             data &&
                             title.map((name, index) => {
-                                return(
-                                    <th className="px-6 py-3" key={index} >{name}</th>
-                                ) 
+                                if(name === "total" || name === "nilai"){
+                                    return(
+                                        <th className="px-6 py-3 text-right" key={index} >{name}</th>
+                                    )
+                                } else {
+                                    return(
+                                        <th className="px-6 py-3" key={index} >{name}</th>
+                                    ) 
+                                }
                             })
                         }
-                           <th className="px-6 py-3" ></th> 
+                        <th className="px-6 py-3" ></th> 
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        currentItems &&
-                        currentItems.map((row, index) => (  
+                        data &&
+                        data.map((row, index) => (  
                             <React.Fragment key={row.id}>
                                 <tr key={index} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700`} >
                                     {/* {
@@ -93,10 +115,10 @@ export default function SatkerTable({data, isLoading, itemsPerPage, tittles, rel
                                     
                                 </tr>
                                 {
-                                  
+                                
                                     selectedRow === index && 
                                     <SubTableSatker data={row["subMak"]}/>
-                                   
+                                
                                 }
                             </React.Fragment>
                         ))
@@ -104,6 +126,7 @@ export default function SatkerTable({data, isLoading, itemsPerPage, tittles, rel
                                     
                 </tbody>
             </table>
+        }
             <div className="flex justify-center mt-5">
                 <ReactPaginate 
                     nextLabel=">"
@@ -121,6 +144,6 @@ export default function SatkerTable({data, isLoading, itemsPerPage, tittles, rel
                     renderOnZeroPageCount={null} 
                 />
             </div>
-        </div>
+         </div>
     )
 }

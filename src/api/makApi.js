@@ -5,7 +5,6 @@ import { tambahmak, hapusmak, editmak, listmak, getListHeader } from "../redux/f
 import { failMessage } from "../redux/feature/errorHandlingSlice";
 
 const getListMak = async (data) => {
-    console.log("masuk sini")
     try {
         const result = await instance({
             method: "post",
@@ -91,7 +90,7 @@ const getMakHeader = () => async (dispatch) => {
             message: message,
             status: false
         }
-     
+        throw payload
         dispatch(failMessage(payload))
     }
 }

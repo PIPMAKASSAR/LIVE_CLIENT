@@ -26,10 +26,14 @@ export default function Belanja() {
     ]
 
     const title = [
-        "No", 'Mak', 'Penerima', 'Uraian', 'Nilai', 'Pajak',
+        "No", "Tanggal", "Kode Transaksi", 'Mak', 'Penerima', 'Uraian', 'Nilai', 'Pajak',
     ]
 
     const [limit, setLimit] = useState("10")
+    const [offSet, setOffset] = useState("0")
+    const [totalRow, setTotalRow] = useState("")
+    const [totalPages, setTotalPages] = useState("")
+
     const [isLoading, setIsLoading] = useState(false)
     const [cari, setCari] = useState("")
     const [periode, setPeriode] = useState("")
@@ -44,7 +48,7 @@ export default function Belanja() {
 
     const handleDelete = (payload) => {
         MySwal.fire({
-            title: `Apakah anda yakin ingin menghapus data ini ${payload}?`,
+            title: `Apakah anda yakin ingin menghapus data ini '${payload["kode_transaksi"]} - ${payload["uraian"]}'?`,
             text: "Anda tidak dapat mengembalikannya!",
             icon: 'warning',
             showCancelButton: true,
@@ -53,7 +57,7 @@ export default function Belanja() {
             confirmButtonText: 'Yes, delete it!'
           }).then((result) => {
             if (result.isConfirmed) {
-                belanjaApi.deleteBelanja(payload)
+                belanjaApi.deleteBelanja(payload.uuid)
                 .then(() => {
                     setReload(!reload)
                     MySwal.fire(
@@ -82,30 +86,44 @@ export default function Belanja() {
     const handleCari = async (event) => {
         event.preventDefault()
         setIsLoading(true)
-        const result = await belanjaApi.getListBelanja(cari)
+        const payload = {
+            search: cari,
+            limit,
+            offset: offSet
+        }
+        const result = await belanjaApi.getListBelanja(payload)
         if (result) {
             setIsLoading(false)
-            setData(result)
+            setTotalRow(result["totalRow"])
+            setTotalPages(result["total_pages"])
+            setData(result.data)
         } else {
             setIsLoading(false)
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Mengambil Data Penerima",
+                title: "Gagal Mengambil Data Belanja",
               });
         }
     }
 
     const getAllBelanja = async () => {
         setIsLoading(true)
-        const result = await belanjaApi.getListBelanja()
+        const payload = {
+            search: cari,
+            limit,
+            offset: offSet
+        }
+        const result = await belanjaApi.getListBelanja(payload)
         if (result) {
             setIsLoading(false)
-            setData(result)
+            setTotalRow(result["totalRow"])
+            setTotalPages(result["total_pages"])
+            setData(result.data)
         } else {
             setIsLoading(false)
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Mengambil Data Penerima",
+                title: "Gagal Mengambil Data Belanja",
               });
         }
     } 
@@ -189,10 +207,19 @@ export default function Belanja() {
                         </form>
                     </div>
                     {
-                        isLoading ?
-                        <LoadingSpinner />
-                        :
-                        <TableBelanja title={title} data={data} itemsPerPage={limit} handleDelete={handleDelete} handleEdit={handleShowEdit} />
+                        data &&
+                        <TableBelanja 
+                            title={title} 
+                            data={data} 
+                            itemsPerPage={limit} 
+                            handleDelete={handleDelete} 
+                            handleEdit={handleShowEdit} 
+                            isLoading={isLoading} 
+                            offSet={offSet}
+                            setOffset={setOffset}
+                            pageCount={totalPages} 
+                            totalRow={totalRow}
+                        />
                     }
                 </div>   
             </div>

@@ -39,7 +39,7 @@ const postSaldoOperasional = (data) => async (dispatch) => {
     }
 }
 
-const getListSaldoOperasional = (data) => async (dispatch) => {
+const getListSaldoOperasional = async (data) => {
     try {
         const result = await instance({
             method: "post",
@@ -47,12 +47,12 @@ const getListSaldoOperasional = (data) => async (dispatch) => {
             headers: authHeader(),
             data: {
                 "limit" :data.limit,
-                "offset": "0",
+                "offset": data.offset,
                 "search": data.search,
                 "token": tokenApi()
             }
         })
-        dispatch(listSaldoOperasional(result.data.data))
+        return result.data
      
     }
     catch(error) {
@@ -66,7 +66,9 @@ const getListSaldoOperasional = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+
+        return payload
+        
     }
 } 
 

@@ -10,17 +10,23 @@ import { failMessage, clearErrorMessage } from "../../redux/feature/errorHandlin
 import { clearPengeluaranStatus } from "../../redux/feature/pengeluaranSlice";
 import TableWithPagination from "../../component/tableWithPagination";
 import routeName from "../../helpers/routeName";
-
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 export default function Pengeluaran() {
+    const MySwal = withReactContent(Swal)
     const titlesBreadCump = ["Keuangan", "Pengeluaran"]
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const dataListPengeluaran = useSelector(state => state.pengeluaran.data)
+    const [data, setData] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [cari, setCari] = useState("")
-    const [limit, setLimit] = useState("10")
     const [reload, setReload] = useState(false)
+    
+    const [limit, setLimit] = useState("10")
+    const [offSet, setOffset] = useState("0")
+    const [totalPages, setTotalPages] = useState("")
+    const [totalRow, setTotalRow] = useState("")
 
     const titles = [
         "No", "Tanggal Transaksi", "Jenis Transaksi", "Kode Akun", "Nilai", "Update"
@@ -35,53 +41,65 @@ export default function Pengeluaran() {
         navigate(routeName.tambahPengeluaran)
     }
 
-    const handleCari = (event) => {
-        event.preventDefault()
-        setIsLoading(true)
-        const payload = {
-            cari: cari
+    const handleCari = async (event) => {
+        try {
+            event.preventDefault()
+            setIsLoading(true)
+            const payload = {
+                limit:limit,
+                cari: cari,
+                offset: offSet,
+            }
+            const result = await pengeluaranApi.getListPengeluaran(payload)
+            if(result.status) {
+                setIsLoading(false)
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            }
         }
-        if(cari) {
-            dispatch(pengeluaranApi.getCariData(payload))
-            .then(() => {
+        catch(err) {
+            setIsLoading(false)
+            setData([])
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal mengambil data pengeluaran",
+            });
+        }
+        
+    }
+
+    const handleGetListPengeluaran = async () => {
+        try {
+            setIsLoading(true)
+            const payload = {
+                limit:limit,
+                cari: cari,
+                offset: offSet,
+            }
+            const result = await pengeluaranApi.getListPengeluaran(payload)
+            if(result.status) {
                 setIsLoading(false)
-            })
-        } else {
-            dispatch(pengeluaranApi.getListPengeluaran(payload))
-            .then(() => {
-                setIsLoading(false)
-            })
-            .catch((err) => {
-                const payload = {
-                    message: "koneksi terputus, silahkan login ulang",
-                    status: false,
-                }
-                dispatch(failMessage(payload))
-                setIsLoading(false)
-            })
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            }
+        }
+        catch(err) {
+            setIsLoading(false)
+            setData([])
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal mengambil data pengeluaran",
+            });
         }
     }
 
     useEffect(() => {
-        dispatch(clearPengeluaranStatus())
-        dispatch(clearErrorMessage())
-        setIsLoading(true)
-        const payload = {
-            limit: limit
-        }
-        dispatch(pengeluaranApi.getListPengeluaran(payload))
-        .then(() => {
-            setIsLoading(false)
-        })
-        .catch((err) => {
-            const payload = {
-                message: "koneksi terputus, silahkan login ulang",
-                status: false,
-            }
-            dispatch(failMessage(payload))
-            setIsLoading(false)
-        })
-    },[limit, reload])
+
+        handleGetListPengeluaran()
+
+    },[limit, reload, offSet])
     return(
         <div className="p-4 w-full h-full overflow-y-auto">
             <div className="p-4 rounded-lg mt-14 ">    
@@ -154,12 +172,16 @@ export default function Pengeluaran() {
                     {/* <Table titles={titles}  data={dataListPengeluaran} isLoading={isLoading} category={"pengeluaran"} />  */}
                     <TableWithPagination 
                         tittles={titles} 
-                        data={dataListPengeluaran} 
+                        data={data} 
                         isLoading={isLoading} 
                         category={"pengeluaran"} 
                         itemsPerPage={limit} 
                         reload={reload}
                         setReload={setReload}
+                        offSet={offSet}
+                        setOffset={setOffset}
+                        pageCount={totalPages} 
+                        totalRow={totalRow}
                         />
                 </div>              
             </div>

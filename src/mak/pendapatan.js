@@ -1,4 +1,3 @@
-import ParentTableWithEditDelete from "../component/parentTableWithEditDelete";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,14 +6,13 @@ import Button from "../component/button";
 import SelectInput from "../component/SelectInput";
 import dataFake from "../helpers/fakeDataNested";
 import routeName from "../helpers/routeName";
-import makApi from "../api/makApi";
-import tokenApi from "../api/tokenApi";
-import instance from "../api/config";
-import authHeader from "../api/authHeaders";
+import pendapatanApi from "../api/pendapatanApi";
+import ModalEditMasterPendapatan from "../component/modalEditMasterPendapatan";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import ModalEditMak from "../component/modalEditMak";
 import LoadingSpinner from "../component/loadingSpinner";
+import ParentTablePendapatan from "../component/parentTablePendapatan";
+
 
 
 export default function Pendapatan() {
@@ -28,12 +26,16 @@ export default function Pendapatan() {
     ]
 
     const [limit, setLimit] = useState("10")
+    const [offSet, setOffset] = useState("0")
+    const [totalPages, setTotalPages] = useState("")
+    const [totalRow, setTotalRow] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [cari, setCari] = useState("")
     const [reload, setReload] = useState(false)
     const [data, setData] = useState([])
+    const [page, setPage] = useState(1)
     const [showModalEdit, setShowModalEdit] = useState(false)
-    const [dataMak, setDataMak] = useState({})
+    const [dataPendapatanBelanja, setPendapatanBelanja] = useState({})
 
     const handleTambahPendapatan = () => {
         navigate(routeName.tambahPendapatan)
@@ -41,7 +43,7 @@ export default function Pendapatan() {
 
     const handleDelete = (payload) => {
         MySwal.fire({
-            title: `Apakah anda yakin ingin menghapus data ini ${payload}?`,
+            title: `Apakah anda yakin ingin menghapus data ini '${payload["kode_akun"]} - ${payload["uraian"]}'?`,
             text: "Anda tidak dapat mengembalikannya!",
             icon: 'warning',
             showCancelButton: true,
@@ -50,12 +52,12 @@ export default function Pendapatan() {
             confirmButtonText: 'Yes, delete it!'
           }).then((result) => {
             if (result.isConfirmed) {
-                dispatch(makApi.deleteMak(payload))
+                pendapatanApi.deletePendapatan(payload.uuid)
                 .then(() => {
                     setReload(!reload)
                     MySwal.fire(
                         'Terhapus!',
-                        'Data anda sudah terhapus.',
+                        'Data master pendapatan anda sudah terhapus.',
                         'success'
                     )
                 })
@@ -63,7 +65,7 @@ export default function Pendapatan() {
                     setReload(!reload)
                     MySwal.fire({
                         icon: "error",
-                        title: "Gagal Menghapus Mak",
+                        title: "Gagal Menghapus data master pendapatan",
                         });
                 })
                 
@@ -73,69 +75,126 @@ export default function Pendapatan() {
     }
     const HandleShowEdit = (data) => {
         setShowModalEdit(true)
-        setDataMak({...data})
+        setPendapatanBelanja({...data})
     }
 
     const handleCari = async (event) => {
         event.preventDefault()
-        makApi.getListMak(cari)
-        .then((result) => {
-            setData(result)
-        })
-        .cacth((err) => {
-            
-        })
-    }
-
-    const getListMak = async () => {
         try {
             setIsLoading(true)
-            const result = await instance({
-                method: "post",
-                url: '/list_tbl_op_mak/',
-                headers: authHeader(),
-                data: {
-                    "limit" :"",
-                    "offset": "0",
-                    "search": "",
-                     "token": tokenApi()
-                }
-            })
-            if(result.data.data) {
+            const payload = {
+                search: cari,
+                limit,
+                offset: offSet
+            }
+            const result = await pendapatanApi.getListPendapatan(payload)
+            if(result) {
                 setIsLoading(false)
-                setData(result.data.data)
-            }else {
+                // setReload(!reload)
+                console.log(result)
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            } else {
                 setIsLoading(false)
+                setData([])
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal mencari data master pendapatan",
+                });
             }
             
         }
         catch(error) {
-            const message = (
-                error.response && 
-                error.response.data && 
-                error.response.data.message ||
-                error.message ||
-                error.toString())
-            const payload = {
-                message: message,
-                status: false
-            }
-            setIsLoading(false)
-           console.log(message)
+            console.log(error)
+            MySwal.fire({
+                icon: "error",
+                title: error.message,
+            });
         }
     }
 
+    const paginationData = async () => {
+        setIsLoading(true)
+        try {
+            const payload = {
+                search: cari,
+                limit,
+                offset: offSet
+            }
+            const result = await pendapatanApi.getListPendapatan(payload)
+            if(result) {
+                setIsLoading(false)
+                setData(result.data)
+            } else {
+                setIsLoading(false)
+                setData([])
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal mengambil data master pendapatan",
+                });
+            }
+            
+        }
+        catch(error) {
+            console.log(error)
+            setIsLoading(false)
+            MySwal.fire({
+                icon: "error",
+                title: error.message,
+            });
+        }
+    }
+
+    const getListPendapatan = async () => {
+        console.log(offSet)
+        try {
+            setIsLoading(true)
+            const payload = {
+                search: cari,
+                limit,
+                offset: offSet
+            }
+            const result = await pendapatanApi.getListPendapatan(payload)
+            if(result) {
+                setIsLoading(false)
+                // setReload(!reload)
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            } else {
+                setIsLoading(false)
+                setData([])
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal mengambil data master pendapatan",
+                });
+            }
+            
+        }
+        catch(error) {
+            console.log(error)
+            MySwal.fire({
+                icon: "error",
+                title: error.message,
+            });
+        }
+    }
     useEffect(() => {
-        getListMak()
-    }, [limit,reload])
+        paginationData()
+    },[offSet])
+
+    useEffect(() => {
+        getListPendapatan()
+    }, [limit, reload])
 
     return(
         <div className="p-4 w-full h-full overflow-y-auto" >
 
-            {/* {
-                dataMak &&
-                <ModalEditMak showModal={showModalEdit} data={dataMak} setShowModal={setShowModalEdit} reload={reload} setReload={setReload} />
-            } */}
+            {
+                dataPendapatanBelanja &&
+                <ModalEditMasterPendapatan showModal={showModalEdit} data={dataPendapatanBelanja} setShowModal={setShowModalEdit} reload={reload} setReload={setReload} />
+            }
             <div className="p-4 rounded-lg mt-14 " >
                 <div className="flex flex-row justify-between items-center border-b dark:border-gray-700 p-4 mb-4 rounded bg-gray-50">
                     <h1 className="text-lg font-extrabold dark:text-white">List Pendapatan/Tarif</h1>
@@ -201,10 +260,23 @@ export default function Pendapatan() {
                         </form>
                     </div>
                     {
-                        isLoading ?
-                        <LoadingSpinner />
-                        :
-                        <ParentTableWithEditDelete data={data} itemsPerPage={limit} handleDelete={handleDelete} handleEdit={HandleShowEdit} />
+                        data && 
+                        <ParentTablePendapatan 
+                            data={data} 
+                            setData={setData} 
+                            offSet={offSet} 
+                            setOffset={setOffset} 
+                            setIsLoading={setIsLoading} 
+                            isLoading={isLoading} 
+                            setReload={setReload} 
+                            reload={reload} 
+                            itemsPerPage={limit} 
+                            handleDelete={handleDelete} 
+                            handleEdit={HandleShowEdit} 
+                            pageCount={totalPages} 
+                            setPage={setPage} 
+                            totalRow={totalRow} 
+                            cari={cari} />
                     }
                 </div>   
             </div>

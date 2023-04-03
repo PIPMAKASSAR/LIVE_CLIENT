@@ -38,7 +38,7 @@ const postSaldoDanaKelolaan = (data) => async (dispatch) => {
     }
 }
 
-const getListSaldoDanaKelolaan = (data) => async (dispatch) => {
+const getListSaldoDanaKelolaan = async (data) => {
     try {
         const result = await instance({
             method: "post",
@@ -46,12 +46,12 @@ const getListSaldoDanaKelolaan = (data) => async (dispatch) => {
             headers: authHeader(),
             data: {
                 "limit" :data.limit,
-                "offset": "0",
-                "search": "",
+                "offset": data.offset,
+                "search": data.cari,
                 "token": tokenApi()
             }
         })
-        dispatch(listSaldoDanaKelolaan(result.data.data))
+        return  result.data
      
     }
     catch(error) {
@@ -65,7 +65,7 @@ const getListSaldoDanaKelolaan = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 }
 

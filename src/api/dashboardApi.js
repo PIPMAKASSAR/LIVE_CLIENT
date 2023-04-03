@@ -21,8 +21,8 @@ const getTotalPenerimaan =(data) => async (dispatch) => {
             url:"/get_total_penerimaan",
             headers :authHeader(),
             data : {
-                "tgl_awal":dateFormat(data[0], "isoDate"),
-                "tgl_akhir":dateFormat(data[1], "isoDate"),
+                "tgl_awal":data[0] ? dateFormat(data[0], "isoDate") : "",
+                "tgl_akhir":data[1] ? dateFormat(data[1], "isoDate") : "",
                 // "tgl_awal":"",
                 // "tgl_akhir":"",
                 token: token,
@@ -53,8 +53,8 @@ const getTotalPengeluaran = (data) => async (dispatch) => {
             url:"/get_total_pengeluaran",
             headers :authHeader(),
             data : {
-                "tgl_awal":dateFormat(data[0], "isoDate"),
-                "tgl_akhir":dateFormat(data[1], "isoDate"),
+                "tgl_awal":data[0] ? dateFormat(data[0], "isoDate") : "",
+                "tgl_akhir":data[1] ? dateFormat(data[1], "isoDate") : "",
                 token: token,
             }
         })
@@ -83,8 +83,8 @@ const getTotalSaldoOperasional = (data) => async (dispatch) => {
             url:"/get_total_saldooperasional",
             headers :authHeader(),
             data : {
-                "tgl_awal":dateFormat(data[0], "isoDate"),
-                "tgl_akhir":dateFormat(data[1], "isoDate"),
+                "tgl_awal":data[0] ? dateFormat(data[0], "isoDate") : "",
+                "tgl_akhir":data[1] ? dateFormat(data[1], "isoDate") : "",
                 token: token,
             }
         })
@@ -114,8 +114,8 @@ const getTotalSaldoDanaKelolaan = (data) => async (dispatch) => {
             url:"/get_total_saldodanakelolaan",
             headers :authHeader(),
             data : {
-                "tgl_awal":dateFormat(data[0], "isoDate"),
-                "tgl_akhir":dateFormat(data[1], "isoDate"),
+                "tgl_awal":data[0] ? dateFormat(data[0], "isoDate") : "",
+                "tgl_akhir":data[1] ? dateFormat(data[1], "isoDate") : "",
                 token: token,
             }
         })
@@ -144,8 +144,8 @@ const getTotalSaldoKas = (data) => async (dispatch) => {
             url:"/get_total_saldokas",
             // headers :authHeader(),
             data : {
-                "tgl_awal":dateFormat(data[0], "isoDate"),
-                "tgl_akhir":dateFormat(data[1], "isoDate"),
+                "tgl_awal":data[0] ? dateFormat(data[0], "isoDate") : "",
+                "tgl_akhir":data[1] ? dateFormat(data[1], "isoDate") : "",
                 token: token,
             }
         })
@@ -174,8 +174,8 @@ const getGrafikPenerimaan = (data) => async (dispatch) => {
             url:"/grafik_penerimaan",
             // headers :authHeader(),
             data : {
-                "tgl_awal":dateFormat(data[0], "isoDate"),
-                "tgl_akhir":dateFormat(data[1], "isoDate"),
+                "tgl_awal":data[0] ? dateFormat(data[0], "isoDate") : "",
+                "tgl_akhir":data[1] ? dateFormat(data[1], "isoDate") : "",
                 token: token,
             }
         })

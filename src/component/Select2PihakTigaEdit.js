@@ -1,29 +1,44 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState,useEffect, useRef } from 'react';
 import Select from "react-select"
+import penerimaanPihakTigaApi from '../api/penerimaanPihakTigaApi';
 
-export default function Select2PihakTigaEdit ({data, value, setValue, title}) {
-    const options = []
-    data.map((data, index) => {
-        const payload = {
-            value: data["uuid"],
-            label: data["no_rekening"] + " " + data["nama"],
+export default function Select2PihakTigaEdit ({value, setValue,}) {
+    const [data, setData] = useState([])
+    
+    const loadOption = async () => {
+        const detail = await penerimaanPihakTigaApi.getListPihakTiga()
+
+        if(detail.length > 0) {
+            const data = detail.map((item) => (
+                {
+                    value: item["uuid"],
+                    label: item["no_rekening"]+ ' - ' +item["nama"],
+                }
+            ));
+            data.unshift({value: "", label:"silahkan pilih kode akun", tarif:"0"})
+            setData(data);
+        } else {
+            const defaultData = [{value: "", label:"silahkan pilih kode akun", tarif:"0"}]
+            setData(defaultData);
         }
-        options.push(payload)
-    }) 
-    const findValue = options.filter(element => element.value === value)
+    };
+    const findValue = data.filter(element => element.value === value.value)
+    
+    useEffect(() => {
+        loadOption()
+    },[])
+
     const handleOption = (value) => {
-        setValue(value.value)
+        setValue(value)
     }
     return (
-        <div className="mb-6">
-            <label htmlFor={"header"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{title}</label>
-            <Select 
-                options={options}
-                value={findValue}
-                className="basic-single"
-                onChange={handleOption}
-                required
-            />
-        </div>
+        <Select 
+            options={data}
+            value={findValue}
+            className="basic-single"
+            onChange={handleOption}
+            isLoading={!data.length}
+            required
+        />
     )
 }

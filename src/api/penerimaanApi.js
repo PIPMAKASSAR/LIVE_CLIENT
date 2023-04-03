@@ -41,27 +41,25 @@ const postTambahPenerimaan = (data) => async (dispatch) => {
             status: false
         }
         throw payload
-        dispatch(failMessage(payload))
     }
 }
 
-const getListPenerima = (data) => async (dispatch) => {
+const getListPenerima = async (data) => {
     try{
+        console.log('ini di penerimaan api',data)
         const result = await instance({
             method: "post",
             url: "/list_tbl_inout/",
             headers: authHeader(),
             data : {
-                "limit" :"",
-                "offset": "0",
+                "limit": data.limit,
+                "offset": data.offset,
                 "jns_transaksi": "Penerimaan",
-                "search": "",
+                "search": data.cari,
                 "token": tokenApi()
             }
         })
-      
-        dispatch(listPenerimaan(result.data.data))
-        
+        return result.data
     }
     catch(error) {
         const message = (
@@ -74,7 +72,7 @@ const getListPenerima = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 } 
 

@@ -12,6 +12,7 @@ import Button from "../../component/button";
 import SelectInput from "../../component/SelectInput";
 import Select2Periode from "../../component/select2Periode";
 import LoadingSpinner from "../../component/loadingSpinner";
+import { set } from "date-fns";
 
 export default function Satker() {
     const dispatch = useDispatch()
@@ -23,6 +24,7 @@ export default function Satker() {
     ]
     
     const [limit, setLimit] = useState("10")
+    
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingDefault, setIsLoadingDefault] = useState(false)
     const [cari, setCari] = useState("")
@@ -34,18 +36,22 @@ export default function Satker() {
         label: "",
     })
     const [dataPeriode, setDataPeriode] = useState([])
+    const [offSet, setOffset] = useState("0")
+    const [totalRow, setTotalRow] = useState("")
+    const [totalPages, setTotalPages] = useState("")
+    const [page, setPage] = useState(1)
 
     const handleShowModalUplad = () => {
         setShow(!show)
     }
+
     const getPeriode = async () => {
-        
         try {
             const result = await satkerApi.getPeriodeSatker()
             if(result) {
-                console.log("status true")
+                console.log("status true", )
                 result.map((item)=> {
-                    if(item["status_priode"] === "true") {
+                    if(item["status_priode"] == "true") {
                         const payload = {
                             value: item["priode"],
                             label: item["priode"],
@@ -60,7 +66,7 @@ export default function Satker() {
         catch (err) {
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Mengambil Data Periode Satuan Kerja",
+                title: err.message,
               });
         }
     }
@@ -72,12 +78,16 @@ export default function Satker() {
             if(resultPeriode) {
                 const payload = {
                     periode: periodeDef.value,
-                    cari
+                    cari,
+                    limit,
+                    offSet:offSet
                 }
                 const result = await satkerApi.getListSatker(payload)
                 if(result) {
                     setIsLoading(false)
-                    return setData(result)
+                    setTotalPages(result["total_pages"])
+                    setTotalRow(result["totalRow"])
+                    return setData(result.data)
                 }
                 setIsLoading(false)
             }
@@ -91,6 +101,40 @@ export default function Satker() {
               });
         }
     }
+
+    // const paginationData = async () => {
+    //     setIsLoading(true)
+    //     try {
+    //         const payload = {
+    //             periode: periodeDef.value,
+    //             cari,
+    //             limit,
+    //             offset: offSet
+    //         }
+    //         const result = await satkerApi.getListSatker(payload)
+    //         if(result) {
+    //             setIsLoading(false)
+    //             setData(result.data)
+    //             // setTotalRow(result["totalRow"])
+    //         } else {
+    //             setIsLoading(false)
+    //             setData([])
+    //             MySwal.fire({
+    //                 icon: "error",
+    //                 title: "Gagal mengambil data master pendapatan",
+    //             });
+    //         }
+            
+    //     }
+    //     catch(error) {
+    //         console.log(error)
+    //         setIsLoading(false)
+    //         MySwal.fire({
+    //             icon: "error",
+    //             title: error.message,
+    //         });
+    //     }
+    // }
    
 
     const handdleDefaultPeriode = async () => {
@@ -123,12 +167,16 @@ export default function Satker() {
         setIsLoading(true)
         const payload = {
             periode: periodeDef.value,
-            cari
+            cari,
+            limit,
+            offset: offSet
         }
         const result = await satkerApi.getListSatker(payload)
         if (result) {
             setIsLoading(false)
-            setData(result)
+            setTotalPages(result["total_pages"])
+            setTotalRow(result["totalRow"])
+            setData(result.data)
         } else {
             setIsLoading(false)
             MySwal.fire({
@@ -138,9 +186,13 @@ export default function Satker() {
         }
     }
 
+    // useEffect(() => {
+    //     paginationData()
+    // },[offSet])
+
     useEffect(() => {
         getDataListSatker()
-    },[reload])
+    },[limit,reload,offSet])
     return(
         <div className="relative p-4 w-full h-full overflow-y-auto" >
             <ModalUpload show={show} setShow={setShow} handleFunction={handleShowModalUplad} titleForm={"UPLOAD DATA DARI SAKTI"} reload={reload} setReload={setReload} />
@@ -151,7 +203,7 @@ export default function Satker() {
                 </div>
                 <div className="flex flex-row justify-between items-center border-b dark:border-gray-700 p-4 mb-4 rounded bg-gray-50">
                     <div className="w-1/3">
-                        <Select2Periode data={dataPeriode} value={periodeDef} setValue={setPeriodeDef} />
+                        <Select2Periode data={dataPeriode} value={periodeDef} setValue={setPeriodeDef} reload={reload} />
                     </div>
                     <div className="flex gap-4">
                         {/* <div className="">
@@ -261,12 +313,20 @@ export default function Satker() {
                             </div>
                         </form>
                     </div>
-                    {
-                         isLoading ?
-                         <LoadingSpinner />
-                         :
-                        <SatkerTable data={data} itemsPerPage={limit} />
-                    }
+                        <SatkerTable 
+                            data={data} 
+                            itemsPerPage={limit} 
+                            offSet={offSet} 
+                            setOffset={setOffset} 
+                            setIsLoading={setIsLoading} 
+                            isLoading={isLoading} 
+                            setReload={setReload} 
+                            reload={reload} 
+                            page={page} 
+                            pageCount={totalPages} 
+                            setPage={setPage} 
+                            totalRow={totalRow} 
+                        />
                 </div>   
             </div>
         </div>
