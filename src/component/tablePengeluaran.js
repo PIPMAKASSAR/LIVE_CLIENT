@@ -79,19 +79,19 @@ export default function TablePengeluaran ({data,  isLoading , category, tittles,
             }
             <table className={` ${isLoading ? "hidden" : null} w-full h-auto text-sm text-left text-gray-500 dark:text-gray-400 mb-5`}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
+                    <tr className="bg-sky-700 text-sky-50">
                         {
                             titleDefault &&  
                             titleDefault.map((title, index) => {
                                 return(
-                                    <th key={index} scope="col" className="px-3 py-3">
+                                    <th key={index} scope="col" className="px-6 py-3">
                                         {title}
                                     </th> 
                                 )
                             }) 
                         }
                         
-                        <th scope="col" className="px-3 py-3">
+                        <th scope="col" className="px-6 py-3">
                             Aksi
                         </th>
                     </tr>

@@ -40,6 +40,23 @@ export const dataSidebar = [
         ]
     },
     {
+        name: "Laporan",
+        subMenu: [
+            {
+                name:"Laporan BKU Umum",
+                link: routeName.laporanBku,
+            },
+            {
+                name:"Laporan Belanja",
+                link: routeName.laporanBelanja,
+            },
+            {
+                name:"Laporan Pendapatan",
+                link: routeName.laporanPendapatan,
+            }
+        ]
+    },
+    {
         name: "Integrasi Bios",
         subMenu:[
             {
@@ -66,21 +83,5 @@ export const dataSidebar = [
         ] 
         
     },
-    {
-        name: "Laporan",
-        subMenu: [
-            {
-                name:"Laporan BKU Umum",
-                link: routeName.laporanBku,
-            },
-            {
-                name:"Laporan Belanja",
-                link: routeName.laporanBelanja,
-            },
-            {
-                name:"Laporan Pendapatan",
-                link: routeName.laporanPendapatan,
-            }
-        ]
-    }
+    
 ]

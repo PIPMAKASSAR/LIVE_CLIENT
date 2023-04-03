@@ -45,7 +45,7 @@ export default function ParentTablePendapatan({handleFunction ,setIsLoading, isL
                 :
                 <table className={`invicible ${!isLoading ? "visible" : "invicible"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" >
-                        <tr>
+                        <tr className="bg-sky-700 text-sky-50">
                             {
                                 title.map((title, index) => {
                                     return(
