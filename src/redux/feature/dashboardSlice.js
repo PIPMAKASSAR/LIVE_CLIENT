@@ -14,8 +14,8 @@ export const dashboardSlice = createSlice({
         totalPengeluaran: {
             "status": false,
             "message": "gagal",
-            "penerimaan_bulan_ini": 1000,
-            "penerimaan_bulan_lalu": 1000,
+            "pengeluaran_bulan_ini": 1000,
+            "pengeluaran_bulan_lalu": 1000,
             "persentase": "0%",
             "keterangan": "Lebih Kecil Dari Bulan Lalu"
         },
@@ -43,16 +43,7 @@ export const dashboardSlice = createSlice({
             "persentase": "0%",
             "keterangan": "Lebih Kecil Dari Bulan Lalu"
         },
-        grafikPenerimaan: {
-            "status": false,
-            "message": "gagal",
-            "data" : [
-                {
-                    bulan: "Januari",
-                    total: 0
-                }
-            ]
-        },
+        grafikPenerimaan: [],
     },
     reducers: {
         totalPenerimaan: (state, action) => {

@@ -1,8 +1,6 @@
 import { useDispatch } from "react-redux"
 
-export default function ModalDelete({handleFunction, category, showModal, setShowModal, uuid, jnsTransaksi}) {
-    const dispatch = useDispatch()
-
+export default function ModalDelete({handleFunction, category, showModal, setShowModal, uuid, jnsTransaksi, ref}) {
     return( 
         <div 
             id="popup-modal" 
@@ -10,7 +8,7 @@ export default function ModalDelete({handleFunction, category, showModal, setSho
             className={`
                         overflow-y-auto 
                         overflow-x-hidden
-                        bg-gray-200/10 
+                        bg-slate-400/40  
                         fixed 
                         top-0 
                         right-0 

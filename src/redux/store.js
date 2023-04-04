@@ -6,6 +6,7 @@ import pengeluaranReducer from "./feature/pengeluaranSlice"
 import saldoOperasionalReducer from "./feature/saldoOperasionalSlice"
 import saldoDanaKelolaanReducer from "./feature/saldoDanaKelolaanSlice"
 import saldoPengelolaanKasReducer from "./feature/saldoPengelolaanKasSlice"
+import makReducer from "./feature/makSlice"
 import errorHandlingReducer from "./feature/errorHandlingSlice"
 
 export default configureStore({
@@ -17,6 +18,7 @@ export default configureStore({
         saldoOperasional: saldoOperasionalReducer,
         saldoDanaKelolaan: saldoDanaKelolaanReducer,
         saldoPengelolaanKas: saldoPengelolaanKasReducer,
+        mak: makReducer,
         errorHandling: errorHandlingReducer,
     }
 })

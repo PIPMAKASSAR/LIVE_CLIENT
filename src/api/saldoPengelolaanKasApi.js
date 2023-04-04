@@ -13,6 +13,7 @@ const postSaldoPengelolaanKas = (data) => async (dispatch) => {
             data: {
                 "tgl_transaksi": data.tglTransaksi,
                 "kdbank": data.kodeBank,
+                "nama_bank": data.namaBank,
                 "no_bilyet": data.noBilyet,
                 "nilai_deposito": data.nilaiDeposito,
                 "nilai_bunga": data.nilaiBunga,
@@ -36,7 +37,7 @@ const postSaldoPengelolaanKas = (data) => async (dispatch) => {
     }
 }
 
-const getListSaldoPengelolaanKas = (data) => async (dispatch) => {
+const getListSaldoPengelolaanKas = async (data) => {
     try {
         const result = await instance({
             method: "post",
@@ -44,12 +45,12 @@ const getListSaldoPengelolaanKas = (data) => async (dispatch) => {
             headers: authHeader(),
             data: {
                 "limit" :data.limit,
-                "offset": "0",
-                "search": "",
+                "offset": data.offset,
+                "search": data.cari,
                 "token": tokenApi()
             }
         })
-        dispatch(listSaldoPengelolaanKas(result.data.data))
+        return result.data
      
     }
     catch(error) {
@@ -63,7 +64,7 @@ const getListSaldoPengelolaanKas = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 }
 
@@ -136,6 +137,7 @@ const putSaldoPengelolaanKas = (data) => async (dispatch) => {
                 "uuid": data.uuid,
                 "tgl_transaksi": data.tglTransaksi,
                 "kdbank": data.kodeBank,
+                "nama_bank": data.namaBank,
                 "no_bilyet": data.noBilyet,
                 "nilai_deposito": data.nilaiDeposito,
                 "nilai_bunga": data.nilaiBunga,

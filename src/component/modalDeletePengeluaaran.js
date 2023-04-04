@@ -8,7 +8,7 @@ export default function ModalDeletePengluaran({handleFunction, showModal, setSho
             className={`
                         overflow-y-auto 
                         overflow-x-hidden
-                        bg-gray-200/10 
+                        bg-slate-400/40 
                         fixed 
                         top-0 
                         right-0 

@@ -13,7 +13,9 @@ const postSaldoDanaKelolaan = (data) => async (dispatch) => {
             data: {
                 "tgl_transaksi": data.tglTransaksi,
                 "kdbank": data.kodeBank,
+                "nama_bank": data.namaBank,
                 "no_rekening": data.noRekening,
+                "nama_rekening": data.namaRekening,
                 "saldo_akhir": data.saldoAkhir,
                 "token": tokenApi()
             }
@@ -31,11 +33,12 @@ const postSaldoDanaKelolaan = (data) => async (dispatch) => {
             message: message,
             status: false
         }
+        throw payload
         dispatch(failMessage(payload))
     }
 }
 
-const getListSaldoDanaKelolaan = (data) => async (dispatch) => {
+const getListSaldoDanaKelolaan = async (data) => {
     try {
         const result = await instance({
             method: "post",
@@ -43,12 +46,12 @@ const getListSaldoDanaKelolaan = (data) => async (dispatch) => {
             headers: authHeader(),
             data: {
                 "limit" :data.limit,
-                "offset": "0",
-                "search": "",
+                "offset": data.offset,
+                "search": data.cari,
                 "token": tokenApi()
             }
         })
-        dispatch(listSaldoDanaKelolaan(result.data.data))
+        return  result.data
      
     }
     catch(error) {
@@ -62,7 +65,7 @@ const getListSaldoDanaKelolaan = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 }
 
@@ -127,6 +130,7 @@ const getDetailSaldoDanaKelolaan = (data) => async (dispatch) => {
 }
 
 const putSaldoDanaKelolaan = (data) => async (dispatch) => {
+    console.log(data)
     try{
         const result = await instance({
             method: 'post',
@@ -136,7 +140,9 @@ const putSaldoDanaKelolaan = (data) => async (dispatch) => {
                 "uuid": data.uuid,
                 "tgl_transaksi": data.tglTransaksi,
                 "kdbank": data.kodeBank,
+                "nama_bank": data.namaBank,
                 "no_rekening": data.noRekening,
+                "nama_rekening": data.namaRekening,
                 "saldo_akhir": data.saldoAkhir,
                 "token": tokenApi()
             }
@@ -154,6 +160,7 @@ const putSaldoDanaKelolaan = (data) => async (dispatch) => {
             message: message,
             status: false
         }
+        throw payload
         dispatch(failMessage(payload))
     }
 }
@@ -182,6 +189,7 @@ const deleteSaldoDanaKelolaan = (data) => async (dispatch) => {
             message: message,
             status: false
         }
+        throw payload
         dispatch(failMessage(payload))
     }
 }

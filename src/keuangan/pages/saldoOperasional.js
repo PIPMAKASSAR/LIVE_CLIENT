@@ -9,17 +9,23 @@ import saldoOperasionalApi from "../../api/saldoOperasionalApi";
 import { clearErrorMessage, failMessage } from "../../redux/feature/errorHandlingSlice";
 import { clearSaldoOperasionalStatus } from "../../redux/feature/saldoOperasionalSlice";
 import routeName from "../../helpers/routeName";
-
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 export default function SaldoOperasional() {
+    const MySwal = withReactContent(Swal)
     const titlesBreadCump = ["Keuangan", "Saldo Operasional"]
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const [limit, setLimit] = useState("10")
+    const [data, setData] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [reload, setReload] = useState(false)
     const [cari, setCari] = useState("")
-    const dataListSaldoOperasional = useSelector(state => state.saldoOperasional.data)
+
+    const [limit, setLimit] = useState("10")
+    const [offSet, setOffset] = useState("0")
+    const [totalPages, setTotalPages] = useState("")
+    const [totalRow, setTotalRow] = useState("")
 
     const titles = [
         "No", "Tanggal Transaksi", "Kode Bank", "No Rekening", "Unit", "Saldo Akhir", "Update"
@@ -33,56 +39,62 @@ export default function SaldoOperasional() {
         navigate(routeName.tambahSaldoOperasional)
     }
 
-    const handleCari = (event) => {
+    const handleCari = async (event) => {
         event.preventDefault()
-        setIsLoading(true)
-        const payload = {
-            cari: cari
+        try {
+            setIsLoading(true)
+            const payload = {
+                limit:limit,
+                cari: cari,
+                offset: offSet,
+            }
+            const result = await saldoOperasionalApi.getListSaldoOperasional(payload)
+            if(result.status) {
+                setIsLoading(false)
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            }
         }
-        if(cari) {
-            dispatch(saldoOperasionalApi.getCariData(payload))
-            .then(() => {
+        catch(err) {
+            setIsLoading(false)
+            setData([])
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal mengambil data saldo operasional",
+            });
+        }
+    }
+
+    const handleGetListSaldoOperasional = async () => {
+        try {
+            setIsLoading(true)
+            const payload = {
+                limit:limit,
+                cari: cari,
+                offset: offSet,
+            }
+            const result = await saldoOperasionalApi.getListSaldoOperasional(payload)
+            if(result.status) {
                 setIsLoading(false)
-            })
-            .catch((err) => {
-                setIsLoading(false)
-            })
-        } else {
-            dispatch(saldoOperasionalApi.getListSaldoOperasional(payload))
-            .then(() => {
-                setIsLoading(false)
-            })
-            .catch((err) => {
-                const payload = {
-                    message: "koneksi terputus, silahkan login ulang",
-                    status: false,
-                }
-                dispatch(failMessage(payload))
-                setIsLoading(false)
-            })
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            }
+        }
+        catch(err) {
+            setIsLoading(false)
+            setData([])
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal mengambil data saldo operasional",
+            });
         }
     }
 
     useEffect(() => {
-        dispatch(clearSaldoOperasionalStatus())
-        dispatch(clearErrorMessage())
-        setIsLoading(true)
-        const payload = {
-            limit: limit
-        }
-        dispatch(saldoOperasionalApi.getListSaldoOperasional(payload))
-        .then(() => {
-            setIsLoading(false)
-        })
-        .catch((err) => {
-            const payload = {
-                message: "koneksi terputus, silahkan login ulang",
-                status: false,
-            }
-            dispatch(failMessage(payload))
-            setIsLoading(false)
-        })
-    },[limit, reload])
+       handleGetListSaldoOperasional()
+    },[limit, reload, offSet])
 
     return(
         <div className="p-4 w-full h-full overflow-y-auto">
@@ -154,13 +166,16 @@ export default function SaldoOperasional() {
                     </div>
                     {/* Table Penerimaan */}
                     <TableWithPagination
-                        tittles={titles} 
-                        data={dataListSaldoOperasional} 
+                        data={data} 
                         category={"saldoOperasional"} 
                         isLoading={isLoading}  
                         itemsPerPage={limit}
                         reload={reload}
-                        setReload={setReload} 
+                        setReload={setReload}
+                        offSet={offSet}
+                        setOffset={setOffset}
+                        pageCount={totalPages} 
+                        totalRow={totalRow} 
                     />
                 </div>              
             </div>

@@ -5,6 +5,7 @@ import { tambahSaldoOperasional, listSaldoOperasional, hapusSaldoOperasional, de
 import { failMessage } from "../redux/feature/errorHandlingSlice";
 
 const postSaldoOperasional = (data) => async (dispatch) => {
+    console.log(data)
     try {
         const result = await instance({
             method: "post",
@@ -13,7 +14,9 @@ const postSaldoOperasional = (data) => async (dispatch) => {
             data: {
                 "tgl_transaksi": data.tglTransaksi,
                 "kdbank": data.kodeBank,
+                "nama_bank": data.namaBank,
                 "no_rekening": data.noRekening,
+                "nama_rekening": data.namaRekening,
                 "unit": data.unit,
                 "saldo_akhir": data.saldoAkhir,
                 "token": tokenApi()
@@ -32,11 +35,11 @@ const postSaldoOperasional = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 }
 
-const getListSaldoOperasional = (data) => async (dispatch) => {
+const getListSaldoOperasional = async (data) => {
     try {
         const result = await instance({
             method: "post",
@@ -44,12 +47,12 @@ const getListSaldoOperasional = (data) => async (dispatch) => {
             headers: authHeader(),
             data: {
                 "limit" :data.limit,
-                "offset": "0",
+                "offset": data.offset,
                 "search": data.search,
                 "token": tokenApi()
             }
         })
-        dispatch(listSaldoOperasional(result.data.data))
+        return result.data
      
     }
     catch(error) {
@@ -63,7 +66,9 @@ const getListSaldoOperasional = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+
+        return payload
+        
     }
 } 
 
@@ -137,7 +142,9 @@ const putSaldoOperasional = (data) => async (dispatch) => {
                 "uuid" : data.uuid,
                 "tgl_transaksi": data.tglTransaksi ,
                 "kdbank": data.kodeBank,
+                "nama_bank": data.namaBank,
                 "no_rekening": data.noRekening,
+                "nama_rekening": data.namaRekening,
                 "unit": data.unit,
                 "saldo_akhir": data.saldoAkhir,
                 "token": tokenApi()
@@ -156,7 +163,7 @@ const putSaldoOperasional = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 }
 

@@ -21,6 +21,7 @@ export default function Layout() {
             localStorage.clear('user')   
             navigate(routeName.login)
         } 
+
         if(token) {
             const expirationTime = JSON.parse(atob(token.split('.')[1])).exp;
             const currentTime = new Date().getTime() / 1000;
@@ -31,13 +32,14 @@ export default function Layout() {
             }
         }
     },[token])
+
     const handleSideBar = ()  => {
         setIsSideOpen(!isSideOpen)
     }
     return(
         <div className="flex w-full h-screen bg-gray-300">
             <Navbar handleSideBar={handleSideBar} isSideOpen={isSideOpen}  logo={logo} />
-            <div className={`ml-0 ${isSideOpen ? `xl:ml-64` : `null` } w-full overflow-y-auto`}>
+            <div className={`ml-0 ${isSideOpen ? `lg:ml-64` : `null` } w-full overflow-y-auto`}>
                 <Outlet />
             </div>
         </div>

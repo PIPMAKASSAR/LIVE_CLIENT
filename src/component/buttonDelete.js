@@ -14,12 +14,12 @@ export default function ButtonDelete({handleFunction, setUuid, uuid ,title = "Bu
                             text-sm 
                             px-5 
                             py-2.5 
-                            mr-2 mb-2  
+                            ml-2 
                             focus:outline-none"
                             ${`bg-${color}-600 hover:bg-${color}-700` }
                             ${width ? `${width}` : `w-fit`}
                             `}
-                onClick={() => handleFunction(uuid)}
+                onClick={handleFunction}
         > 
             {
                 IconButton &&

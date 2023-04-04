@@ -12,12 +12,11 @@ export default function ButtonEdit({handleFunction, setUuid, data ,title = "Butt
                             text-sm 
                             px-5 
                             py-2.5 
-                            mr-2 mb-2  
                             focus:outline-none"
                             ${`bg-${color}-300 hover:bg-${color}-400` }
                             ${width ? `${width}` : `w-fit`}
                             `}
-                onClick={() => handleFunction(data)}
+                onClick={handleFunction}
         > 
             {
                 IconButton &&

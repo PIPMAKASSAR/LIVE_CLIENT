@@ -1,12 +1,14 @@
-import Button from "./button"
 import { useState } from "react"
-import saldoPengelolaanKasApi from "../api/saldoPengelolaanKasApi"
-import LoadingSpinner from "./loadingSpinner"
 import { useDispatch } from "react-redux"
 import { setItemEdit } from "../redux/feature/saldoPengelolaanKasSlice"
+import saldoPengelolaanKasApi from "../api/saldoPengelolaanKasApi"
+import LoadingSpinner from "./loadingSpinner"
 
+import Button from "./button"
+import ButtonDetail from "./buttonDetail"
 import ModalEdit from "./modalEdit"
 import ModalDelete from "./modalDelete"
+import ModalDetail from "./modalDetail"
 import ButtonDelete from "./buttonDelete"
 
 import ButtonEdit from "./buttonEdit"
@@ -17,23 +19,32 @@ import withReactContent from "sweetalert2-react-content";
 
 
 
-export default function TableSaldoPengelolaanKas ({data,  isLoading , category, tittles, setReload, reload}) {
+export default function TableSaldoPengelolaanKas ({data,  isLoading , category, setReload, reload}) {
     const MySwal = withReactContent(Swal)
     const dispatch = useDispatch()
     const [showModalEdit, setShowModalEdit] = useState(false)
     const [showModalDel, setShowModalDel] = useState(false)
+    const [showModalDetail, setShowModalDetail] = useState(false)
     const [uuId, setUuid] = useState("")
     const [dataEdit, setDataEdit] = useState({})
+    const [detailData, setDetailData] = useState({})
 
-    const handleModalEdit = (payload) => {
-        setShowModalEdit(true)
-        const dataTes = {...payload} 
-        dispatch(setItemEdit(dataTes))
-    }
+    const titleDefault = [
+        "No", "Tanggal Transaksi", "Bank", "No Billyet", "Deposito", "Bunga","Update"
+    ]
+
+    const title = [
+        "uuid", "tgl_transaksi","kdbank", "no_bilyet", "nilai_deposito", "nilai_bunga","status_update"
+    ]
     
-    const handleShowModalEdit = () => {
+    const handleShowModalEdit = (value) => {
         setShowModalEdit(!showModalEdit)
-        setReload(!reload)
+        setDetailData({...value})
+    }
+
+    const handleShowModalDetail = (value) => {
+        setShowModalDetail(true)
+        setDetailData({...value})
     }
     
     const handleModalDelete = (payload) => {
@@ -45,7 +56,6 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
         const payload = {
             uuid: uuId
         }
-        console.log(uuId)
         dispatch(saldoPengelolaanKasApi.deleteSaldoPengelolaanKas(payload))
         .then(() => {
             setReload(!reload)
@@ -64,30 +74,28 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
    
     return(
         <div className={`relative overflow-x-auto shadow-md sm:rounded-lg ${isLoading ? "h-96" : "h-auto"} overflow-y-auto mb-4`}>
-            
+            <ModalDetail data={detailData}  showModal={showModalDetail} setShowModal={setShowModalDetail} title={title} />
+            <ModalEdit data={detailData} category={category} showModal={showModalEdit} setShowModal={setShowModalEdit} setReload={setReload} reload={reload} />
             {   isLoading && 
                 <div className="w-full h-full">
                     <LoadingSpinner />
                 </div>  
             }
-           
-            
-            
             <table className={` ${isLoading ? "hidden" : null} w-full h-auto text-sm text-left text-gray-500 dark:text-gray-400 mb-5`}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
+                    <tr className="bg-sky-700 text-sky-50">
                         {
-                            tittles &&  
-                            tittles.map((title, index) => {
+                            titleDefault &&  
+                            titleDefault.map((title, index) => {
                                 return(
-                                    <th key={index} scope="col" className="px-3 py-3">
+                                    <th key={index} scope="col" className="px-6 py-3">
                                         {title}
                                     </th> 
                                 )
                             }) 
                         }
                         
-                        <th scope="col" className="px-3 py-3">
+                        <th scope="col" className="px-6 py-3">
                             Aksi
                         </th>
                     </tr>
@@ -98,7 +106,7 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
                             data.map((item, index) => {
                                 return(
                                     <tr key={index} className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 mx:h-1">
-                                        <th  scope="row" 
+                                        <td  scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -109,9 +117,9 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
                                                         
                                                         `}
                                         >
-                                            {item["uuid"]}
-                                        </th>
-                                        <th scope="row" 
+                                            {index + 1}
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -122,20 +130,20 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
                                                         `}
                                         >
                                             {item["tgl_transaksi"]}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td  
                                             className={`
                                                         px-3 
                                                         py-2 
                                                         font-medium 
                                                         text-gray-900 
                                                         whitespace-nowrap 
-                                                        dark:text-white
+                                                        dark:text-white  
                                                         `}
                                         >
-                                            {item["kdbank"]}
-                                        </th>
-                                        <th scope="row" 
+                                            <p className="truncate w-40 line-clamp">{item["kdbank"]}: {item["nama_bank"]}</p>
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -146,8 +154,8 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
                                                         `}
                                         >
                                             {item["no_bilyet"]}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -158,8 +166,8 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
                                                         `}
                                         >
                                             {rupiah(item["nilai_deposito"], "Rp.")}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -170,8 +178,8 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
                                                         `}
                                         >
                                             {rupiah(item["nilai_bunga"], 'Rp.')}
-                                        </th>
-                                        <th scope="row" 
+                                        </td>
+                                        <td scope="row" 
                                             className={`
                                                         px-3 
                                                         py-2 
@@ -183,16 +191,15 @@ export default function TableSaldoPengelolaanKas ({data,  isLoading , category, 
                                                         `}
                                         >
                                             {item["status_update"]}  
-                                        </th>
+                                        </td>
                                         <td className="px-3 py-2">
                                             {
                                                 item["status_update"] === 'Posting' ?
-                                                <Button title="Lihat" />
+                                                <ButtonDetail key={index} handleFunction={() => handleShowModalDetail(item)} />
                                                 :
-                                                <div>
-                                                    <ButtonEdit handleFunction={handleModalEdit} title="Edit" color="yellow" data={item} />
-                                                    <ModalEdit handleFunction={handleShowModalEdit} category={category} showModal={showModalEdit} setShowModal={setShowModalEdit} setReload={setReload} reload={reload} />
-                                                    <ButtonDelete handleFunction={handleModalDelete} uuid={item["uuid"]} title="Hapus" color="red" />
+                                                <div className="flex">
+                                                    <ButtonEdit handleFunction={() => handleShowModalEdit(item)} title="Edit" color="yellow" data={item} />
+                                                    <ButtonDelete handleFunction={() => handleModalDelete(item["uuid"])} uuid={item["uuid"]} title="Hapus" color="red" />
                                                     <ModalDelete handleFunction={handleDelete} category={category} showModal={showModalDel} setShowModal={setShowModalDel} />
                                                 </div>
                                             }

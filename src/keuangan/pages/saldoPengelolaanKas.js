@@ -8,21 +8,24 @@ import { useDispatch, useSelector } from "react-redux";
 import saldoPengelolaanKasApi from "../../api/saldoPengelolaanKasApi";
 import { failMessage } from "../../redux/feature/errorHandlingSlice";
 import routeName from "../../helpers/routeName";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 export default function SaldoPengelolaanKas() {
+    const MySwal = withReactContent(Swal)
     const titlesBreadCump = ["Keuangan", "Saldo Pengelolaan Kas"]
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const dataSaldoPengelolaanKas = useSelector(state => state.saldoPengelolaanKas.data)
-    const [limit, setLimit] = useState("10")
+    const [data, setData] = useState([])
+
     const [isLoading, setIsLoading] = useState(false)
     const [cari, setCari] = useState("")
     const [reload, setReload] = useState(false)
 
-
-    const titles = [
-        "No", "Tanggal Transaksi", "Kode Bank", "No Billyet", "Deposito", "Bunga","Update"
-    ]
+    const [limit, setLimit] = useState("10")
+    const [offSet, setOffset] = useState("0")
+    const [totalPages, setTotalPages] = useState("")
+    const [totalRow, setTotalRow] = useState("")
 
     const jumlahRow = [
         "10", "25", "50", "100"
@@ -32,55 +35,62 @@ export default function SaldoPengelolaanKas() {
         navigate(routeName.tambahSaldoPeneglolaanKas)
     }
 
-    const handleCari = (event) => {
+    const handleCari = async (event) => {
         event.preventDefault()
-        setIsLoading(true)
-        const payload = {
-            limit: limit,
-            cari: cari
+        try {
+            setIsLoading(true)
+            const payload = {
+                limit:limit,
+                cari: cari,
+                offset: offSet,
+            }
+            const result = await saldoPengelolaanKasApi.getListSaldoPengelolaanKas(payload)
+            if(result.status) {
+                setIsLoading(false)
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            }
         }
-        if(cari) {
-            dispatch(saldoPengelolaanKasApi.getCariData(payload))
-            .then(() => {
+        catch(err) {
+            setIsLoading(false)
+            setData([])
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal mengambil data saldo pengelolaan kas",
+            });
+        }
+    }
+
+    const handleGetListSaldoPengelolaanKas = async () => {
+        try {
+            setIsLoading(true)
+            const payload = {
+                limit:limit,
+                cari: cari,
+                offset: offSet,
+            }
+            const result = await saldoPengelolaanKasApi.getListSaldoPengelolaanKas(payload)
+            if(result.status) {
                 setIsLoading(false)
-            })
-            .catch((err) => {
-                setIsLoading(false)
-            })
-        } else {
-            dispatch(saldoPengelolaanKasApi.getListSaldoPengelolaanKas(payload))
-            .then(() => {
-                setIsLoading(false)
-            })
-            .catch((err) => {
-                const payload = {
-                    message: "koneksi terputus, silahkan login ulang",
-                    status: false,
-                }
-                dispatch(failMessage(payload))
-                setIsLoading(false)
-            })
+                setTotalPages(result["total_pages"])
+                setTotalRow(result["totalRow"])
+                setData(result.data)
+            }
+        }
+        catch(err) {
+            setIsLoading(false)
+            setData([])
+            MySwal.fire({
+                icon: "error",
+                title: "Gagal mengambil data saldo Pengelolaan Kas",
+            });
         }
     }
 
     useEffect(() => {
-        setIsLoading(true)
-        const payload = {
-            limit: limit
-        }
-        dispatch(saldoPengelolaanKasApi.getListSaldoPengelolaanKas(payload))
-        .then(() => {
-            setIsLoading(false)
-        })
-        .catch((err) => {
-            const payload = {
-                message: "koneksi terputus, silahkan login ulang",
-                status: false,
-            }
-            dispatch(failMessage(payload))
-            setIsLoading(false)
-        })
-    },[limit, reload])
+        handleGetListSaldoPengelolaanKas()
+    },[limit, reload, offSet])
 
     return(
         <div className="p-4 w-full h-full overflow-y-auto">
@@ -96,7 +106,7 @@ export default function SaldoPengelolaanKas() {
                     </div>
                     {/* Search */}
                     <div className="flex flex-row w-full justify-between items-center mb-4">
-                        <SelectInput width={"w-24"} titles={jumlahRow} />
+                        <SelectInput width={"w-24"} titles={jumlahRow} isValue={limit} setValue={setLimit} />
                         <form className="" onSubmit={handleCari} >   
                             <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                             <div className="relative w-96">
@@ -151,14 +161,17 @@ export default function SaldoPengelolaanKas() {
                         </form>
                     </div>
                     {/* Table Penerimaan */}
-                    <TableWithPagination
-                        tittles={titles} 
-                        data={dataSaldoPengelolaanKas} 
+                    <TableWithPagination 
+                        data={data} 
                         category={"saldoPengelolaanKas"} 
                         isLoading={isLoading}  
                         itemsPerPage={limit}
                         reload={reload}
                         setReload={setReload}
+                        offSet={offSet}
+                        setOffset={setOffset}
+                        pageCount={totalPages} 
+                        totalRow={totalRow} 
                     />
                 </div>              
             </div>

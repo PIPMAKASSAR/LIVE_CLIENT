@@ -1,6 +1,7 @@
 import instance from "./config";
 import authHeader from "./authHeaders";
 import tokenApi from "./tokenApi"
+import dateFormat from "dateformat";
 import { successMessage,failMessage, lossConectionMessage } from "../redux/feature/errorHandlingSlice";
 import { 
         tambahPenerimaan, 
@@ -18,6 +19,7 @@ const postTambahPenerimaan = (data) => async (dispatch) => {
             data : {
                 "tgl_transaksi": data.tangalTransaksi,
                 "kode_akun": data.kodeAkun,
+                "nama_akun": data.namaAkun,
                 "bayar" : data.bayar,
                 "jns_transaksi": data.jnsTransaksi,
                 "token": tokenApi()
@@ -38,27 +40,26 @@ const postTambahPenerimaan = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 }
 
-const getListPenerima = (data) => async (dispatch) => {
+const getListPenerima = async (data) => {
     try{
+        console.log('ini di penerimaan api',data)
         const result = await instance({
             method: "post",
             url: "/list_tbl_inout/",
             headers: authHeader(),
             data : {
-                "limit" :"",
-                "offset": "0",
+                "limit": data.limit,
+                "offset": data.offset,
                 "jns_transaksi": "Penerimaan",
-                "search": "",
+                "search": data.cari,
                 "token": tokenApi()
             }
         })
-      
-        dispatch(listPenerimaan(result.data.data))
-        
+        return result.data
     }
     catch(error) {
         const message = (
@@ -71,7 +72,7 @@ const getListPenerima = (data) => async (dispatch) => {
             message: message,
             status: false
         }
-        dispatch(failMessage(payload))
+        throw payload
     }
 } 
 
@@ -117,6 +118,7 @@ const putPenerimaan = (data) => async (dispatch) => {
                 "uuid": data.uuid,
                 "tgl_transaksi": data.tangalTransaksi,
                 "kode_akun": data.kodeAkun,
+                "nama_akun": data.namaAkun,
                 "bayar" : data.bayar,
                 "jns_transaksi": data.jnsTransaksi,
                 "token": tokenApi()
@@ -137,6 +139,7 @@ const putPenerimaan = (data) => async (dispatch) => {
             message: message,
             status: false
         }
+        throw payload
         dispatch(failMessage(payload))
     }
 }
@@ -162,6 +165,7 @@ const deletePenerimaan = (data) => async (dispatch) => {
             message: message,
             status: false
         }
+        throw payload
         dispatch(failMessage(payload))
     }
 }

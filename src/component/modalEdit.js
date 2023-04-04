@@ -4,7 +4,7 @@ import FormEditSaldoDanaKelolaan from "./formEditSaldoDanaKelolaan"
 import FormEditSaldoOperasional from "./formEditSaldoOperasional"
 import FormEditSaldoPengelolaanKas from "./formEditSaldoPengelolaanKas"
 
-export default function ModalEdit({category, showModal, setShowModal, data, handleFunction}) {
+export default function ModalEdit({category, showModal, setShowModal, data, reload, setReload}) {
     return(     
         <div 
             id="popup-modal" 
@@ -12,7 +12,7 @@ export default function ModalEdit({category, showModal, setShowModal, data, hand
             className={`
                         overflow-y-auto 
                         overflow-x-hidden
-                        bg-gray-200/10 
+                        bg-slate-400/40 
                         fixed 
                         top-0 
                         right-0 
@@ -50,7 +50,7 @@ export default function ModalEdit({category, showModal, setShowModal, data, hand
                                         dark:hover:text-white
                                         " 
                             data-modal-toggle="popup-modal"
-                            onClick={handleFunction}
+                            onClick={() => setShowModal(false)}
                     >
                         <svg 
                                 aria-hidden="true" 
@@ -96,15 +96,15 @@ export default function ModalEdit({category, showModal, setShowModal, data, hand
                     </button>
                    {
                         category === "penerimaan" ?
-                        <FormEditPenerimaan />
+                        <FormEditPenerimaan data={data} reload={reload} setReload={setReload} />
                         : category === "pengeluaran" ?
-                        <FormEditPengeluaran />
+                        <FormEditPengeluaran data={data} reload={reload} setReload={setReload} />
                         : category === "saldoOperasional" ? 
-                        <FormEditSaldoOperasional />
+                        <FormEditSaldoOperasional data={data} reload={reload} setReload={setReload} />
                         : category === "saldoDanaKelolaan" ?
-                        <FormEditSaldoDanaKelolaan />
+                        <FormEditSaldoDanaKelolaan data={data} reload={reload} setReload={setReload} />
                         : category === "saldoPengelolaanKas" ?
-                        <FormEditSaldoPengelolaanKas />
+                        <FormEditSaldoPengelolaanKas data={data} reload={reload} setReload={setReload} />
                         :
                         null
                    }

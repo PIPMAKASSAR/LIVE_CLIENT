@@ -19,6 +19,8 @@ import normalizeBayar from "../../helpers/normalizeBayar";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import routeName from "../../helpers/routeName";
+import handleKeyPress from "../../helpers/handleKeyPress";
+import Select2Akun from "../../component/select2Akun";
 
 
 export default function TambahPenerimaan() {
@@ -44,45 +46,45 @@ export default function TambahPenerimaan() {
         dispatch(clearPenerimaanStatus())
         dispatch(clearErrorMessage())
         setIsLoading(true)
-        const payload = {
-            tangalTransaksi: dateFormat(tglTransaksi, "isoDate") ,
-            kodeAkun:kodeAkun,
-            bayar:normalizeBayar(bayar),
-            jnsTransaksi:jnsTransaksi,
-        }
-        dispatch(penerimaanApi.postTambahPenerimaan(payload))
-        .then(() => {
-            setIsLoading(false)
-            setTglTransaksi("")
-            setKodeAkun("")
-            setBayar("")
-            MySwal.fire({
-                icon: "success",
-                title: "Data Penerimaan Berhasil Ditambahkan",
-            })
-        })
-        .catch((err) => {
-            setIsLoading(false)
+        if(!kodeAkun) {
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Menambahkan Data Penerimaan",
-              });
-            
-        })
+                title: "Isi kode akun terlebih dahulu",
+            });
+            setIsLoading(false)
+        } else {
+            const payload = {
+                tangalTransaksi: dateFormat(tglTransaksi, "isoDate") ,
+                kodeAkun:kodeAkun.value.kode,
+                namaAkun: kodeAkun.value.uraian,
+                bayar:normalizeBayar(bayar),
+                jnsTransaksi:jnsTransaksi,
+            }
+            dispatch(penerimaanApi.postTambahPenerimaan(payload))
+            .then(() => {
+                setIsLoading(false)
+                setTglTransaksi("")
+                setKodeAkun("")
+                setBayar("")
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Penerimaan Berhasil Ditambahkan",
+                })
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Data Penerimaan",
+                  });
+                
+            })
+        }
     }
 
     useEffect(() => {
         handleChangeRupiah(bayar)
     },[bayar])
-
-    function handleKeyPress(event) {
-        const keyCode = event.which || event.keyCode;
-        const keyValue = String.fromCharCode(keyCode);
-
-        if (/[^0-9\b]/.test(keyValue)) {
-            event.preventDefault();
-        }
-    }
 
   
     return(
@@ -115,7 +117,7 @@ export default function TambahPenerimaan() {
 
                 </div> 
                 <div className="md:grid md:grid-cols-2 gap-4 w-full h-auto flex flex-col">
-                    <div className="flex justify-center w-full h-full p-4 rounded">
+                    <div className="w-full h-full p-4 rounded">
                         <FullCalendar
                             plugins={[ dayGridPlugin ]}
                             initialView="dayGridMonth"
@@ -163,7 +165,8 @@ export default function TambahPenerimaan() {
                             
                             <div className="mb-6 w-full">
                                 <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Akun</label>
-                                <input 
+                                <Select2Akun value={kodeAkun} setValue={setKodeAkun} />
+                                {/* <input 
                                         type="text" 
                                         id="KodeAkun" 
                                         className="
@@ -183,8 +186,8 @@ export default function TambahPenerimaan() {
                                         onKeyDown = {handleKeyPress}
                                         onChange={(e) => setKodeAkun(e.target.value)}
                                         required 
-                                />
-                                <p className="mt-2 text-sm"><span className="font-medium">Exp: 544467</span> Input harus berupa angka</p>
+                                /> */}
+                                {/* <p className="mt-2 text-sm"><span className="font-medium">Exp: 544467</span> Input harus berupa angka</p> */}
                             </div>
 
                             <div className="mb-6 w-full">

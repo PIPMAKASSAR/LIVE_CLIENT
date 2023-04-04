@@ -3,37 +3,33 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "./button";
 import dateFormat from "dateformat";
-import SuccessMsg from "./successMsg";
-import ErrorMsg from "./errorMsg";
-import { clearPenerimaanStatus } from "../redux/feature/penerimaSlice";
 import { clearPengeluaranStatus } from "../redux/feature/pengeluaranSlice";
 import { clearErrorMessage } from "../redux/feature/errorHandlingSlice";
 import handleChangeRupiah from "../helpers/handleChangRupiah";
 import normalizeBayar from "../helpers/normalizeBayar";
-import ModalSuccess from "./modalSuccess";
-import ModalFaill from "./modalFaill";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import handleKeyPress from "../helpers/handleKeyPress";
+import Select2AkunEdit from "./select2AkunEdit";
 
-export default function FormEditPengeluaran () {
+export default function FormEditPengeluaran ({data, reload, setReload}) {
+    const akun = {
+        kode: data["kode_akun"],
+        uraian: data["nama_akun"]
+    }
     const MySwal = withReactContent(Swal)
     const dispatch = useDispatch()
-    const data = useSelector(state => state.pengeluaran.item)
-    const statusEditPengeluaran = useSelector(state => state.pengeluaran.edit)
-    const statusError = useSelector(state => state.errorHandling.getError)
-    const convertDate = dateFormat(data["tgl_transaksi"], "dd/mm/yyyy") 
     const [uuid, setUuid] = useState(data["uuid"])
     const [tglTransaksi, setTglTransaksi] = useState("")
-    const [kodeAkun,setKodeAkun] = useState(data["kode_akun"])
-    const [bayar,setBayar] = useState(data["bayar"])
+    const [kodeAkun,setKodeAkun] = useState("")
+    const [bayar,setBayar] = useState("")
     const [jnsTransaksi, setJnsTransaksi] = useState("Pengeluaran")
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         setUuid(data["uuid"])
         setTglTransaksi(dateFormat(data["tgl_transaksi"], "yyyy-mm-dd"))
-        setKodeAkun(data["kode_akun"])
+        setKodeAkun(akun)
         setBayar(handleChangeRupiah(data["bayar"]))
     },[data])
 
@@ -45,13 +41,15 @@ export default function FormEditPengeluaran () {
         const payload = {
             uuid: uuid,
             tangalTransaksi: dateFormat(tglTransaksi, "isoDate") ,
-            kodeAkun:kodeAkun,
+            kodeAkun:kodeAkun.kode,
+            namaAkun:kodeAkun.uraian,
             bayar:normalizeBayar(bayar),
             jnsTransaksi:jnsTransaksi,
         }
         dispatch(pengeluaranApi.putPengeluaran(payload))
         .then(() => {
             setIsLoading(false)
+            setReload(!reload)
             MySwal.fire({
                 icon: "success",
                 title: "Data Pengeluaran Berhasil Di Edit",
@@ -109,28 +107,7 @@ export default function FormEditPengeluaran () {
 
                 <div className="mb-6 w-full">
                     <label htmlFor="KodeAkun" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Akun</label>
-                    <input 
-                            type="text" 
-                            id="KodeAkun" 
-                            className="
-                                        block 
-                                        w-full 
-                                        p-2 
-                                        text-gray-900 
-                                        border 
-                                        border-gray-300 
-                                        rounded-lg 
-                                        bg-gray-50 
-                                        sm:text-xs 
-                                        focus:ring-blue-500 
-                                        focus:border-blue-500 
-                                        "
-                            value={kodeAkun}
-                            onKeyDown={handleKeyPress}
-                            onChange={(e) => setKodeAkun(e.target.value)}
-                            required 
-                    />
-                    <p className="mt-2 text-sm"><span className="font-medium">Exp: 544467</span> Input harus berupa angka</p>
+                    <Select2AkunEdit value={kodeAkun} setValue={setKodeAkun} />
                 </div>
 
                 <div className="mb-6 w-full">

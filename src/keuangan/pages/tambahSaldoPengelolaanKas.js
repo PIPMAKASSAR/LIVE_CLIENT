@@ -17,6 +17,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import handleKeyPress from "../../helpers/handleKeyPress";
 import routeName from "../../helpers/routeName";
+import Select2Bank from "../../component/select2bank";
 
 export default function TambahSaldoPengelolaanKas() {
     const MySwal = withReactContent(Swal)
@@ -40,33 +41,42 @@ export default function TambahSaldoPengelolaanKas() {
         dispatch(clearErrorMessage())
         dispatch(clearSaldoPengelolaanKasStatus())
         setIsLoading(true)
-        const payload = {
-            "tglTransaksi": dateFormat(tglTransaksi, "isoDate") ,
-            "kodeBank": kodeBank,
-            "noBilyet": noBilyet,
-            "nilaiDeposito": normalizeBayar(nilaiDeposito),
-            "nilaiBunga": normalizeBayar(nilaiBunga),
-        }
-        dispatch(saldoPengelolaanKasApi.postSaldoPengelolaanKas(payload))
-        .then(() => {
-            setIsLoading(false)
-            setTglTransaksi("")
-            setKodeBank("")
-            setNoBilyet("")
-            setNilaiDeposito("")
-            setNilaiBunga("")
-            MySwal.fire({
-                icon: "success",
-                title: "Data Saldo Pengelolaan Kas Berhasil Ditambahkan",
-            })
-        })
-        .catch((err) => {
-            setIsLoading(false)
+        if(!kodeBank) {
             MySwal.fire({
                 icon: "error",
-                title: "Gagal Menambahkan Data Pengelolaan Kas",
-              });
-        })
+                title: "Lengkapi data terlebih dahulu",
+            });
+            setIsLoading(false)
+        } else {
+            const payload = {
+                "tglTransaksi": dateFormat(tglTransaksi, "isoDate") ,
+                "kodeBank": kodeBank.value.kode,
+                "namaBank": kodeBank.value.uraian,
+                "noBilyet": noBilyet,
+                "nilaiDeposito": normalizeBayar(nilaiDeposito),
+                "nilaiBunga": normalizeBayar(nilaiBunga),
+            }
+            dispatch(saldoPengelolaanKasApi.postSaldoPengelolaanKas(payload))
+            .then(() => {
+                setIsLoading(false)
+                setTglTransaksi("")
+                setKodeBank("")
+                setNoBilyet("")
+                setNilaiDeposito("")
+                setNilaiBunga("")
+                MySwal.fire({
+                    icon: "success",
+                    title: "Data Saldo Pengelolaan Kas Berhasil Ditambahkan",
+                })
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                MySwal.fire({
+                    icon: "error",
+                    title: "Gagal Menambahkan Data Pengelolaan Kas",
+                  });
+            })
+        }
     }
  
     return(
@@ -98,7 +108,7 @@ export default function TambahSaldoPengelolaanKas() {
 
                 </div> 
                 <div className="md:grid md:grid-cols-2 gap-4 w-full h-auto flex flex-col">
-                    <div className="flex justify-center w-full h-full p-4 rounded">
+                    <div className="w-full h-full p-4 rounded">
                         <FullCalendar
                             plugins={[ dayGridPlugin ]}
                             initialView="dayGridMonth"
@@ -147,27 +157,7 @@ export default function TambahSaldoPengelolaanKas() {
                             
                             <div className="mb-6 w-full">
                                 <label htmlFor="kodeBank" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Bank</label>
-                                <input 
-                                        type="text" 
-                                        id="kodeBank" 
-                                        className="
-                                                    block 
-                                                    w-full 
-                                                    p-2 
-                                                    text-gray-900 
-                                                    border 
-                                                    border-gray-300 
-                                                    rounded-lg 
-                                                    bg-gray-50 
-                                                    sm:text-xs 
-                                                    focus:ring-blue-500 
-                                                    focus:border-blue-500 
-                                                    " 
-                                        value={kodeBank}
-                                        onKeyDown={handleKeyPress}
-                                        onChange={(e) => {setKodeBank(e.target.value)}}
-                                />
-                                <p className="mt-2 text-sm"><span className="font-medium">Exp: 424111</span> Input harus berupa angka</p>
+                                <Select2Bank value={kodeBank} setValue={setKodeBank} />
                             </div>
 
                             <div className="mb-6 w-full">

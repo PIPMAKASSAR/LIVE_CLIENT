@@ -1,0 +1,164 @@
+<table className={`w-full text-sm text-left text-gray-500 dark:text-sky-400`}>
+    <thead className="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+        <tr className="bg-sky-700 text-sky-50">
+            <th rowSpan="3" scope="col" className="px-6 py-3 bold border-2 border-Neutral-900">No</th>
+            <th rowSpan="3" scope="col" className="px-6 py-3 bold border-2 border-Neutral-900">Uraian</th>
+            <th rowSpan="3" scope="col" className="px-6 py-3 bold border-2 border-Neutral-900">Tarif</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">TOTAL</th>
+            
+        </tr> 
+        <tr className="bg-sky-700 text-sky-50">
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN JANUARI</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN FEBRUARI</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN MARET</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN APRIL</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN MEI</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN JUNI</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN JULI</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN AGUSTUS</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN SEPTEMBEER</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN OKTOBER</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN NOVEMBER</th>
+            <th colSpan="2" scope="col" className="px-6 py-3 text-center bold border-2 border-Neutral-900">PENDAPATAN DESEMBER</th>
+            <th colSpan="2" scope="colgroup" className="px-6 py-3 text-center bold border-2 border-Neutral-900">DAFTAR PENDAPATAN BLU</th>
+        </tr>
+
+        <tr className="bg-sky-700 text-sky-50">
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">satuan</th>
+            <th scope="col" className="px-6 py-3 text-right bold border-2 border-Neutral-900">total</th>
+        </tr>
+
+    </thead>
+    <tbody>
+    { 
+            data &&
+            data.map((row, index) => {
+                return(
+                    <React.Fragment key={row["No Bukti"]}>
+                        <tr key={index} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700`}>
+                            <td scope="col" className="px-6 py-3 border-2 border-Neutral-900">{index + 1}</td>
+                            <td scope="col" className="px-6 py-3 border-2 border-Neutral-900">{row["uraian"]}</td>
+                            <td scope="col" className="px-6 py-3 border-2 border-Neutral-900">{row["tarif"]}</td>
+                            <td scope="col" className="px-6 py-3 text-right border-2 border-Neutral-900">
+                                {row["januari"] && row["januari"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["januari"] && rupiah(row["januari"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["februari"] && row["februari"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["februari"] && rupiah(row["februari"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["maret"] && row["maret"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["maret"] && rupiah(row["maret"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["april"] && row["april"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["april"] && rupiah(row["april"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["mei"] && row["mei"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["mei"] && rupiah(row["mei"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["juni"] && row["juni"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["juni"] && rupiah(row["juni"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["juli"] && row["juli"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["juli"] && rupiah(row["juli"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["agustus"] && row["agustus"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["agustus"] && rupiah(row["agustus"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["september"] && row["september"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["september"] && rupiah(row["september"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["oktober"] && row["oktober"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["oktober"] && rupiah(row["oktober"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["november"] && row["november"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["november"] && rupiah(row["november"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["desember"] && row["desember"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["desember"] && rupiah(row["desember"]["total"])}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["totalKeseluruhan"] && row["totalKeseluruhan"]["satuan"]}
+                            </td>
+                            <td scope="col" className="px-2 py-3 text-right border-2 border-Neutral-900">
+                                {row["totalKeseluruhan"] && rupiah(row["totalKeseluruhan"]["total"])}
+                            </td>
+
+                        </tr>
+                    </React.Fragment>
+                )
+            })
+    }
+        
+    </tbody>
+</table>

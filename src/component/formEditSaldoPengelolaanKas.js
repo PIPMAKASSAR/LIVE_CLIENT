@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "./button";
 import dateFormat from "dateformat";
-import SuccessMsg from "./successMsg";
-import ErrorMsg from "./errorMsg";
 import { clearSaldoPengelolaanKasStatus } from "../redux/feature/saldoPengelolaanKasSlice";
 import { clearErrorMessage } from "../redux/feature/errorHandlingSlice";
 import handleChangeRupiah from "../helpers/handleChangRupiah";
@@ -12,17 +10,18 @@ import normalizeBayar from "../helpers/normalizeBayar";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import handleKeyPress from "../helpers/handleKeyPress";
+import Select2BankEdit from "./select2BankEdit";
+export default function FormEditSaldoPengelolaanKas ({data, reload, setReload}) {
+    const bank = {
+        kode: data["kdbank"],
+        uraian: data["nama_bank"]
+    }
 
-export default function FormEditSaldoPengelolaanKas () {
     const MySwal = withReactContent(Swal)
-    const data = useSelector(state => state.saldoPengelolaanKas.item)
     const dispatch = useDispatch()
-    const statusSaldoPengelolaanKas = useSelector(state => state.saldoPengelolaanKas.edit)
-    const statusError = useSelector(state => state.errorHandling.getError)
-  
-    const [uuid, setUuid] = useState(data["uuid"])
-    const [tglTransaksi, setTglTransaksi] = useState(data["tgl_transaksi"])
-    const [kodeBank, setKodeBank] = useState(data["kdbank"])
+    const [uuid, setUuid] = useState("")
+    const [tglTransaksi, setTglTransaksi] = useState("")
+    const [kodeBank, setKodeBank] = useState("")
     const [noBilyet, setNoBilyet] = useState("")
     const [nilaiDeposito, setNilaiDeposito] = useState("")
     const [nilaiBunga, setNilaiBunga] = useState("") 
@@ -31,7 +30,7 @@ export default function FormEditSaldoPengelolaanKas () {
     useEffect(() => {
         setUuid(data["uuid"])
         setTglTransaksi(dateFormat(data["tgl_transaksi"], "yyyy-mm-dd"))
-        setKodeBank(data["kdbank"])
+        setKodeBank(bank)
         setNoBilyet(data["no_bilyet"])
         setNilaiDeposito(handleChangeRupiah(data["nilai_deposito"]))
         setNilaiBunga(handleChangeRupiah(data["nilai_bunga"]))
@@ -46,7 +45,8 @@ export default function FormEditSaldoPengelolaanKas () {
         const payload = {
             "uuid" : uuid,
             "tglTransaksi": dateFormat(tglTransaksi, "isoDate") ,
-            "kodeBank": kodeBank,
+            "kodeBank": kodeBank.kode,
+            "namaBank": kodeBank.uraian,
             "noBilyet": noBilyet,
             "nilaiDeposito": normalizeBayar(nilaiDeposito),
             "nilaiBunga": normalizeBayar(nilaiBunga)
@@ -54,6 +54,7 @@ export default function FormEditSaldoPengelolaanKas () {
         dispatch(saldoPengelolaanKasApi.putSaldoPengelolaanKas(payload))
         .then(() => {
             setIsLoading(false)
+            setReload(!reload)
             MySwal.fire({
                 icon: "success",
                 title: "Data Saldo Pengelolaan Kas Berhasil Di Edit",
@@ -105,27 +106,7 @@ export default function FormEditSaldoPengelolaanKas () {
                 
                 <div className="mb-6 w-full">
                     <label htmlFor="kodeBank" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Bank</label>
-                    <input 
-                            type="text" 
-                            id="kodeBank" 
-                            className="
-                                        block 
-                                        w-full 
-                                        p-2 
-                                        text-gray-900 
-                                        border 
-                                        border-gray-300 
-                                        rounded-lg 
-                                        bg-gray-50 
-                                        sm:text-xs 
-                                        focus:ring-blue-500 
-                                        focus:border-blue-500 
-                                        " 
-                            value={kodeBank}
-                            onKeyDown={handleKeyPress}
-                            onChange={(e) => {setKodeBank(e.target.value)}}
-                    />
-                    <p className="mt-2 text-sm"><span className="font-medium">Exp: 424111</span> Input harus berupa angka</p>
+                    <Select2BankEdit value={kodeBank} setValue={setKodeBank} />
                 </div>
 
                 <div className="mb-6 w-full">
