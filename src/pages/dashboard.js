@@ -25,16 +25,17 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { subDays ,addDays, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 // import Button from "../component/button"
 import LoadingSpinner from "../component/loadingSpinner"
-
+import dateFormat from "dateformat"
+import parseISO from "date-fns/parseISO"
 
 const colors = ["#00cec9", "#0984e3", "#6c5ce7", "#ffeaa7", "#fab1a0", "#ff7675", "#fd79a8", "#fdcb6e", "#00b894", "#e17055", "#d63031", "#636e72"]
 
 export default function Dashboard({isSideOpen}) {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const [dateRange, setDateRange] = useState(["", ""]);
-    const [startDate, endDate] = dateRange;
-
+    const [bulan, setBulan] = useState("");
+    const [dataGrafik, setDataGrafik] = useState([])
+    
     const [reload, setReload] = useState(true)
     const [periode, setPeriode] = useState(false)
     const [loadingPenerima, setLoadingPenerima] = useState(false)
@@ -55,11 +56,6 @@ export default function Dashboard({isSideOpen}) {
     const valueSaldDanaKelolaan = useRef(null)
     const valueSaldoKas = useRef(null)
     const valueGrafikPenerimaan = useRef(null)
-    const handleTanggal = (update) => {
-        setReload(!reload)
-        setDateRange(update)
-        // dispatch(dashboardApi.getTotalPenerimaan(dateRange))
-    }
 
     const handleGetData = async () => {
         setLoadingPenerima(true)
@@ -67,36 +63,37 @@ export default function Dashboard({isSideOpen}) {
         setLoadingSaldoOperasional(true)
         setLoadingSaldoDanaKelolaan(true)
         setLoadingSaldoKas(true)
-        dispatch(dashboardApi.getTotalPenerimaan(dateRange))
+        const payload = dateFormat(bulan, "yyyy-mm") 
+        dispatch(dashboardApi.getTotalPenerimaan(payload))
         .then(() => {
             setLoadingPenerima(false)
-            dispatch(dashboardApi.getTotalPengeluaran(dateRange))
+            dispatch(dashboardApi.getTotalPengeluaran(payload))
             .then(() => {
                 setLoadingPengeluaran(false)
-                dispatch(dashboardApi.getTotalSaldoOperasional(dateRange))
+                dispatch(dashboardApi.getTotalSaldoOperasional(payload))
                 .then(() => {
                     setLoadingSaldoOperasional(false)
-                    dispatch(dashboardApi.getTotalSaldoDanaKelolaan(dateRange))
+                    dispatch(dashboardApi.getTotalSaldoDanaKelolaan(payload))
                     .then(() => {
                         setLoadingSaldoDanaKelolaan(false)
-                        dispatch(dashboardApi.getTotalSaldoKas(dateRange))
+                        dispatch(dashboardApi.getTotalSaldoKas(payload))
                         .then(() => {
                             setLoadingSaldoKas(false)
-                            dispatch(dashboardApi.getGrafikPenerimaan(dateRange))
+                            dashboardApi.getGrafikPenerimaan(payload)
+                            .then((result) => {
+                                console.log(result, "ini d grafik")
+                                setDataGrafik(result)
+                            })
                         })
                     })
                 })
             })
         })   
     }
-
-    const handlePeriode = () => {
-        setPeriode(!periode)
-    }
   
     useEffect(() => {
         handleGetData()
-    },[reload])
+    },[bulan,reload])
 
     
    
@@ -108,20 +105,22 @@ export default function Dashboard({isSideOpen}) {
                         <label className="md:mr-2 w-full mb-2 text-sm font-medium text-gray-900 dark:text-white">Periode :</label>
                         <div className={`w-48`}>
                             <DatePicker
-                                selectsRange={true}
-                                startDate={startDate}
-                                endDate={endDate}
-                                onChange={handleTanggal}
-                                className="w-full 
-                                p-4 
-                                text-sm 
-                                text-gray-900 
-                                border 
-                                border-gray-300 
-                                rounded-lg 
-                                bg-gray-50"
-                                withPortal
-                            />
+                                selected={bulan}
+                                onChange={(date) => setBulan(date)}
+                                dateFormat="MM/yyyy"
+                                showMonthYearPicker
+                                showFullMonthYearPicker
+                                className="
+                                    w-24
+                                    px-4
+                                    py-2 
+                                    text-sm 
+                                    text-gray-900 
+                                    border 
+                                    border-gray-300 
+                                    rounded-md 
+                                    bg-gray-50"
+                                />
                         </div>
                     </div> 
                 </div>
@@ -309,7 +308,7 @@ export default function Dashboard({isSideOpen}) {
                 <div className=" p-9 flex flex-col w-full h-chart rounded bg-gray-50">
                     <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-lg font-bold mb-5">GRAFIK PEMBUATAN PENERIMAAN MONTH TO MONTH</h1>
                     <ResponsiveContainer width="100%" height="100%">
-                    <BarChart width={730} height={250} data={grafikPenerimaan.data}>
+                    <BarChart width={730} height={250} data={dataGrafik}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="bulan" />
                         <YAxis />

@@ -95,7 +95,7 @@ export default function TableLaporanPendapatan({row, header, periodeAwal, period
                     </tr>
 
                 </thead>
-                <tbody className="w-full">
+                {/* <tbody className="w-full">
                 { 
                         row &&
                         row.map((row, index) => {
@@ -138,7 +138,7 @@ export default function TableLaporanPendapatan({row, header, periodeAwal, period
                         })
                 }
                     
-                </tbody>
+                </tbody> */}
             </table>
             
         </div>
