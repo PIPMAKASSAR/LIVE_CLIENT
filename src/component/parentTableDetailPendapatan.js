@@ -11,10 +11,6 @@ import LoadingSpinner from "./loadingSpinner";
 
 
 export default function ParentTableDetailPendapat({data, isLoading, itemsPerPage, tittles, reload, setReload, handleDelete, handleEdit}) {
-    const [selectedRow, setSelectedRow] = useState(null);
-    const [currentItems, setCurrentItems] = useState(null)
-    const [pageCount, setPageCount] = useState(0)
-    const [itemOffset, setItemOffset] = useState(0)
     const uuidRef = useRef(null)
     const title = [
         "No", "Jenis", "Kode Akun", "Uraian", "Harga"
@@ -28,30 +24,35 @@ export default function ParentTableDetailPendapat({data, isLoading, itemsPerPage
     };
     console.log(data)
 
-    useEffect(() => {
-        const endOffset = itemOffset + itemsPerPage
-        // console.log(`loading items from ${itemOffset} to ${endOffset}`)
-        setCurrentItems(data.slice(itemOffset, endOffset))
-        setPageCount(Math.ceil(data.length / itemsPerPage))
-    },[itemOffset, itemsPerPage, data])
+    const [selectedRow, setSelectedRow] = useState(null);
+    const [itemOffset, setItemOffset] = useState(0)
+ // Here we use item offsets; we could also use page offsets
+  // following the API or data you're working with.
+ 
 
-    const handlePageClick = (event) => {
-        const newOffset = event.selected * itemsPerPage % data.length
-        // console.log(
-        //     `user request page number ${event.selected}, which is offset ${newOffset}`
-        // )
-        setItemOffset(newOffset)
-    }
+  // Simulate fetching items from another resources.
+  // (This could be items from props; or items loaded in a local state
+  // from an API endpoint with useEffect and useState)
+  const endOffset = itemOffset + itemsPerPage;
+  console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+  const currentItems = data.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(data.length / itemsPerPage);
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % data.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset);
+  };
 
     return(
         <div>
             {
-                isLoading ?
-                <LoadingSpinner />
-                :
                 <table className={`invicible ${data && "visible"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" >
-                        <tr className="bg-sky-700 text-sky-50">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 w-full" >
+                        <tr className="bg-sky-700 text-sky-50 w-full">
                             {
                                 title.map((title, index) => {
                                     if(title == "Harga") {
@@ -68,21 +69,22 @@ export default function ParentTableDetailPendapat({data, isLoading, itemsPerPage
                                     )
                                 }) 
                             }
-                            <th  className="px-6 py-3 w-auto text-right" >aksi</th> 
+                            <th  className="px-6 py-3 text-right" ></th> 
+                            <th  className="px-6 py-3 text-right" >aksi</th> 
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            data &&
-                            data.map((row, index) => (  
+                            currentItems &&
+                            currentItems.map((row, index) => (  
                                 <React.Fragment key={row.id}>
-                                    <tr key={index} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700`} >
+                                    <tr key={index} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 `} >
                                         <td className="px-6 py-3">{index+1}</td>
                                         <td className="px-6 py-3">{row["jenis"]}</td>
                                         <td className="px-6 py-3">{row["kode_akun"]}</td>
                                         <td className="px-6 py-3">{row["uraian"]}</td>
                                         <td className="px-6 py-3 text-right">{rupiah(row["tarif"], 'Rp.') || ""}</td>
-                                        <td className="px-6 py-3 grid justify-items-end">
+                                        <td className="pl-6 py-3 grid justify-items-end">
                                             <div className="flex">
                                                 <ButtonEdit title="Edit" color="yellow" handleFunction={() => handleEdit(row)} />
                                                 {
@@ -93,20 +95,22 @@ export default function ParentTableDetailPendapat({data, isLoading, itemsPerPage
                                                 }
                                             </div>
                                         </td>
-                                        <td className="px-6 py-3 w-auto">
-                                            {
-                                                row["subPendapatan"] && row["subPendapatan"].length !== 0  ?
-                                                <button onClick={() => handleToggleSubTable(index)}>
-                                                    {
-                                                        selectedRow === index ? 
-                                                        <AiOutlineMinusCircle className="text-xl" />
-                                                        : 
-                                                        <AiOutlinePlusCircle className="text-xl" />
-                                                    }
-                                                </button>
-                                                :
-                                                ""
-                                            }
+                                        <td className="pr-6 py-3">
+                                            <div className="flex flex-row-reverse">     
+                                                {
+                                                    row["subPendapatan"] && row["subPendapatan"].length !== 0  ?
+                                                    <button onClick={() => handleToggleSubTable(index)}>
+                                                        {
+                                                            selectedRow === index ? 
+                                                            <AiOutlineMinusCircle className="text-xl" />
+                                                            : 
+                                                            <AiOutlinePlusCircle className="text-xl" />
+                                                        }
+                                                    </button>
+                                                    :
+                                                    ""
+                                                }
+                                            </div>
                                         </td>      
                                         
                                     </tr>

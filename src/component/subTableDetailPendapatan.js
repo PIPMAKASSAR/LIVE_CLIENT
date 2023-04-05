@@ -37,7 +37,7 @@ export default function SubTableDetailPendapatan({data, handleDelete, handleEdit
                             <td className="px-6 py-3">{row["kode_akun"]}</td>
                             <td className="px-6 py-3">{row["uraian"]}</td>
                             <td className="px-6 py-3 text-right">{rupiah(row["tarif"], 'Rp.') || ""}</td>
-                            <td className="px-6 py-3 grid justify-items-end">
+                            <td className="pl-6 py-3 grid justify-items-end">
                                 <div className="flex">
                                     <ButtonEdit title="Edit" color="yellow" handleFunction={() => handleEdit(row)} />
                                     {
@@ -48,20 +48,22 @@ export default function SubTableDetailPendapatan({data, handleDelete, handleEdit
                                     }
                                 </div>
                             </td>
-                            <td className="px-6 py-3" >
-                                {
-                                    row["subPendapatan"] && row["subPendapatan"].length !== 0  ?
-                                    <button onClick={() => handleToggleSubTable(index)}>
-                                        {
-                                            selectedRow === index ? 
-                                            <AiOutlineMinusCircle className="text-xl"  />
-                                            : 
-                                            <AiOutlinePlusCircle  className="text-xl" />
-                                        }
-                                    </button>
-                                    :
-                                    ""
-                                }
+                            <td className="pr-6 py-3" >
+                                <div className="flex flex-row-reverse">  
+                                    {
+                                        row["subPendapatan"] && row["subPendapatan"].length !== 0  ?
+                                        <button onClick={() => handleToggleSubTable(index)}>
+                                            {
+                                                selectedRow === index ? 
+                                                <AiOutlineMinusCircle className="text-xl"  />
+                                                : 
+                                                <AiOutlinePlusCircle  className="text-xl" />
+                                            }
+                                        </button>
+                                        :
+                                        ""
+                                    }
+                                </div>
                             </td>      
                             
                         </tr>

@@ -285,6 +285,9 @@ export default function DetailPendapatan() {
                         </form>
                     </div>
                     {
+                         isLoading ?
+                         <LoadingSpinner />
+                         :
                         data &&
                         <ParentTableDetailPendapat data={data} itemsPerPage={limit} handleDelete={handleDelete} handleEdit={HandleShowEdit} reload={reload} setReload={setReload} isLoading={isLoading} />
                     }

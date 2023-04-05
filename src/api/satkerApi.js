@@ -46,6 +46,7 @@ const getListSatker = async (data) => {
                 token: tokenApi()
             }
         })
+        console.log(result)
         return result.data
     }
     catch(error) {

@@ -90,7 +90,14 @@ export default function Satker() {
                     return setData(result.data)
                 }
                 setIsLoading(false)
-            }
+            } 
+            // else {
+            //     setIsLoading(false)
+            //     MySwal.fire({
+            //         icon: "error",
+            //         title: "Belum ada satker yang di upload",
+            //     });
+            // }
             setIsLoading(false)
         }
         catch (err) {
@@ -313,6 +320,11 @@ export default function Satker() {
                             </div>
                         </form>
                     </div>
+                    {
+                        isLoading ?
+                        <LoadingSpinner /> 
+                        :
+                        data &&
                         <SatkerTable 
                             data={data} 
                             itemsPerPage={limit} 
@@ -327,6 +339,7 @@ export default function Satker() {
                             setPage={setPage} 
                             totalRow={totalRow} 
                         />
+                    } 
                 </div>   
             </div>
         </div>

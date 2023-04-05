@@ -10,8 +10,7 @@ import LoadingSpinner from "./loadingSpinner";
 
 export default function SatkerTable({data, isLoading, itemsPerPage, setOffset, offSet, totalRow}) {
     const [selectedRow, setSelectedRow] = useState(null);
-    const [currentItems, setCurrentItems] = useState(null)
-    const [pageCount, setPageCount] = useState(0)
+    
     const [itemOffset, setItemOffset] = useState(0)
     const title = ["no", "kode akun", "uraian", "satuan", "nilai", "total"]
     const handleToggleSubTable = (index) => {
@@ -22,45 +21,36 @@ export default function SatkerTable({data, isLoading, itemsPerPage, setOffset, o
           }
     };
 
-    // useEffect(() => {
-    //     const endOffset = itemOffset + itemsPerPage
-    //     // console.log(`loading items from ${itemOffset} to ${endOffset}`)
-    //     setCurrentItems(data.slice(itemOffset, endOffset))
-    //     setPageCount(Math.ceil(data.length / itemsPerPage))
-    // },[itemOffset, itemsPerPage, data])
+ // Here we use item offsets; we could also use page offsets
+  // following the API or data you're working with.
+ 
 
-    useEffect(() => {
-        const endOffset = offSet + itemsPerPage
-        // console.log(`loading items from ${offSet} to ${endOffset}`)
-        setCurrentItems(data.slice(offSet, endOffset))
-        setPageCount(Math.ceil(totalRow / itemsPerPage))
-    },[offSet, itemsPerPage, data])
+  // Simulate fetching items from another resources.
+  // (This could be items from props; or items loaded in a local state
+  // from an API endpoint with useEffect and useState)
+  const endOffset = itemOffset + itemsPerPage;
+  console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+  const currentItems = data.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(data.length / itemsPerPage);
 
-    // const handlePageClick = (event) => {
-    //     const newOffset = event.selected * itemsPerPage % data.length
-    //     // console.log(
-    //     //     `user request page number ${event.selected}, which is offset ${newOffset}`
-    //     // )
-    //     setItemOffset(newOffset)
-    // }
-
-    const handlePageClick = async (event) => {
-        const newOffset = event.selected * itemsPerPage % totalRow
-        setOffset(String(newOffset))
-    }
+  // Invoke when user click to request another page.
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % data.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset);
+  };
 
     return(
         <div>
         {
-            isLoading ?
-            <LoadingSpinner /> 
-            :
-            data &&
-            <table className={`invicible ${data && "visible"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
+            currentItems &&
+            <table className={`invicible ${currentItems && "visible"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" >
                     <tr className="bg-sky-700 text-sky-50">
                         {
-                            data &&
+                            currentItems &&
                             title.map((name, index) => {
                                 if(name === "total" || name === "nilai"){
                                     return(
@@ -78,8 +68,8 @@ export default function SatkerTable({data, isLoading, itemsPerPage, setOffset, o
                 </thead>
                 <tbody>
                     {
-                        data &&
-                        data.map((row, index) => (  
+                        currentItems &&
+                        currentItems.map((row, index) => (  
                             <React.Fragment key={row.id}>
                                 <tr key={index} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700`} >
                                     {/* {

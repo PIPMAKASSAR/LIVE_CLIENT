@@ -28,6 +28,7 @@ export default function ModalUpload({title, show, setShow, titleForm, handleFunc
             .then((result) => {
                 setIsLoading(false)
                 setSelectedFile(null)
+                setShow(false)
                 setReload(!reload)
                 MySwal.fire({
                     icon: "success",
